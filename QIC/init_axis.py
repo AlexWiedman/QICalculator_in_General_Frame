@@ -2,9 +2,9 @@
 
 import numpy as np
 from scipy.interpolate import CubicSpline as spline
-from spectral_diff_matrix import spectral_diff_matrix
-from r1calc import _determine_helicity
-from centroidFrame import get_FS_frame, centroid, get_Centroid_frame, get_kappa1_kappa2, get_kappa3, get_r_vector
+from QIC.spectral_diff_matrix import spectral_diff_matrix
+from QIC.r1calcLambda import _determine_helicity
+from QIC.centroidFrame import get_FS_frame, centroid, get_Centroid_frame, get_kappa1_kappa2, get_kappa3, get_r_vector
 
 def convert_to_spline(self,array):
     sp=spline(np.append(self.phi,2*np.pi/self.nfp), np.append(array,array[0]), bc_type='periodic')
@@ -56,18 +56,24 @@ def init_axis(self):
     r, rp, rpp, rppp = get_r_vector(R0, R0p, R0pp, R0ppp, Z0, Z0p, Z0pp, Z0ppp, nphi, nfp)
 
     # Calculates necessary diagnostics for the centroid frame from the Frenet-Serret frame
-    tan, norm, binorm, curvature, torsion = get_FS_frame(rp, rpp, rppp)
-    dtdp = np.empty(tan.shape)
+    tangent, normal, binormal, curvature, torsion = get_FS_frame(rp, rpp, rppp)
+    dtdp = np.empty(tangent.shape)
     dldp = np.linalg.norm(rp, axis=1)
-    for idx, m in enumerate(norm):
-        dtdp[idx] = dldp[idx] * curvature[idx] * norm[idx]
+    for idx, m in enumerate(normal):
+        dtdp[idx] = dldp[idx] * curvature[idx] * normal[idx]
     c = centroid(r, rp)
-    p, q, dpdphi, dqdphi = get_Centroid_frame(c, r, tan, rp, dtdp)
-    k1, k2 = get_kappa1_kappa2(p, q, norm, curvature)
+    p, q, dpdphi, dqdphi = get_Centroid_frame(c, r, tangent, rp, dtdp)
+    #dldp = np.linalg.norm(rp, axis=1)
+    #p = normal
+    #q = binormal
+    #dpdphi = dldp[:, None] * (-curvature[:, None] * tangent + torsion[:, None] * binormal)
+    #dqdphi = dldp[:, None] * (-torsion[:, None] * normal)
+    k1, k2 = get_kappa1_kappa2(p, q, normal, curvature)
     k3 = get_kappa3(dpdphi, dqdphi, q, p, dldp)
 
-
-    self.normal = norm
+    
+    self.normal = normal
+    self.binormal = binormal
     self._determine_helicity()
 
     axis_length = np.sum(d_l_d_phi) * d_phi * nfp
@@ -101,15 +107,14 @@ def init_axis(self):
     self.axis_length = axis_length
     self.curvature = curvature
     self.torsion = torsion
-    # These parts don't work anymore because we have to directly take in X1s and X1c, rather than etabar. Why was X1s zeros in the first place?
-    #self.X1s = np.zeros(nphi)
-    #self.X1c = self.etabar / curvature
     self.k1 = k1
     self.k2 = k2
     self.k3 = k3
 
+    np.testing.assert_allclose(np.sqrt(k1**2+k2**2), curvature, atol=1e-15)
+
     #self.min_R0 = fourier_minimum(self.R0)
-    self.tangent = tan
+    self.tangent = tangent
     self.frame_p = p
     self.frame_q = q
     # if i remember correctly, this version of Bbar doesn't make sense and needs to be something else.
@@ -127,15 +132,15 @@ def init_axis(self):
                                                self.zs[i]*np.sin(i*self.nfp*self.phi) \
                                               for i in range(len(self.zs))]))
     
-    # Spline interpolants for the cylindrical components of the Centroid frame:
-    self.frame_p_R_spline         = self.convert_to_spline(self.frame_p[:,0])
-    self.frame_p_phi_spline       = self.convert_to_spline(self.frame_p[:,1])
+    # Spline interpolants for the cartesian components of the Centroid frame:
+    self.frame_p_x_spline         = self.convert_to_spline(self.frame_p[:,0])
+    self.frame_p_y_spline       = self.convert_to_spline(self.frame_p[:,1])
     self.frame_p_z_spline         = self.convert_to_spline(self.frame_p[:,2])
-    self.frame_q_R_spline         = self.convert_to_spline(self.frame_q[:,0])
-    self.frame_q_phi_spline       = self.convert_to_spline(self.frame_q[:,1])
+    self.frame_q_x_spline         = self.convert_to_spline(self.frame_q[:,0])
+    self.frame_q_y_spline       = self.convert_to_spline(self.frame_q[:,1])
     self.frame_q_z_spline         = self.convert_to_spline(self.frame_q[:,2])
-    self.tangent_R_spline         = self.convert_to_spline(self.tangent[:,0])
-    self.tangent_phi_spline       = self.convert_to_spline(self.tangent[:,1])
+    self.tangent_x_spline         = self.convert_to_spline(self.tangent[:,0])
+    self.tangent_y_spline       = self.convert_to_spline(self.tangent[:,1])
     self.tangent_z_spline         = self.convert_to_spline(self.tangent[:,2])
 
     # Spline interpolant for nu = varphi - phi, used for plotting

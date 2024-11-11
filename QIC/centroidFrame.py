@@ -53,12 +53,12 @@ def centroid(r, drdp):
         x += r[i] * dldp[i]
         L += dldp[i]
 
-    return (1/L) * x
+    return [0,0,0] #(1/L) * x
 
 
 
 def get_Centroid_frame(c, r, t, drdphi, dtdphi):
-    # takes the centroid, r, and the tangent vector, returns p and q from the centroid grame
+    # takes the centroid, r, and the tangent vector, returns p and q from the centroid frame
     
     #P0
     p = r - c
@@ -94,6 +94,26 @@ def get_kappa1_kappa2(p, q, n, curvature):
         k2[idx] = curvature[idx] * minus_sin_a
 
     return k1, k2
+
+def get_centroid_X1_Y1(p, q, n, b, X1fs, Y1fs):
+    # calculates X1 and Y1 in the centroid frame from the p and q vectors from centroid frame, as well as the n and b vectors and X1 and Y1 in the Frenet-Serret frame
+
+    X1c = np.empty(len(X1fs[0]))
+    X1s = np.empty(len(X1fs[1]))
+    Y1c = np.empty(len(Y1fs[0]))
+    Y1s = np.empty(len(Y1fs[1]))
+
+    for idx, _ in enumerate(n):
+        ndotp = np.dot(n[idx], p[idx])
+        bdotp = np.dot(b[idx], p[idx])
+        ndotq = np.dot(n[idx], q[idx])
+        bdotq = np.dot(b[idx], q[idx])
+        X1c[idx] = X1fs[0][idx] * ndotp + Y1fs[0][idx] * bdotp
+        X1s[idx] = (X1fs[1][idx] * ndotp + Y1fs[1][idx] * bdotp)
+        Y1c[idx] = X1fs[0][idx] * ndotq + Y1fs[0][idx] * bdotq
+        Y1s[idx] = (X1fs[1][idx] * ndotq + Y1fs[1][idx] * bdotq)
+
+    return X1c, Y1c, X1s, Y1s
 
 def get_kappa3(dpdphi, dqdphi, q, p, lp, tol=1e-10):
 

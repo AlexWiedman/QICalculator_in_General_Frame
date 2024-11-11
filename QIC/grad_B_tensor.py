@@ -14,17 +14,18 @@ def calculate_grad_B_tensor(self):
     tensor.tq = s.sG * s.B0 * s.k2
     tensor.qt = tensor.tq
     
-    tensor.pp = factor * (s.d_X1c_d_varphi * s.Y1s - s.d_X1s_d_varphi * s.Y1c + s.iotaN * (s.X1s * s.Y1s + s.X1c * s.Y1c))
-    tensor.qq = factor * (s.X1c * s.d_Y1s_d_varphi - s.X1s * s.d_Y1c_d_varphi - s.iotaN * (s.X1s * s.Y1s + s.X1c * s.Y1c))
-    tensor.qp = factor * (s.X1c * s.d_X1s_d_varphi - s.X1s * s.d_X1c_d_varphi - s.sG * s.Bbar * s.k3 * s.d_l_d_varphi / s.B0 - s.iotaN * (s.X1s * s.X1s + s.X1c * s.X1c))
-    tensor.pq = factor * (s.Y1s * s.d_Y1c_d_varphi - s.Y1c * s.d_Y1s_d_varphi + s.sG * s.Bbar * s.k3 * s.d_l_d_varphi / s.B0 + s.iotaN * (s.Y1s * s.Y1s + s.Y1c * s.Y1c))
+    
+    tensor.pp = factor * (s.d_X1c_d_varphi * s.Y1s - s.d_X1s_d_varphi * s.Y1c + s.iotaN * (np.multiply(s.X1s,s.Y1s) + np.multiply(s.X1c,s.Y1c)))
+    tensor.qq = factor * (s.X1c * s.d_Y1s_d_varphi - s.X1s * s.d_Y1c_d_varphi - s.iotaN * (np.multiply(s.X1s,s.Y1s) + np.multiply(s.X1c, s.Y1c)))
+    tensor.qp = factor * (s.X1c * s.d_X1s_d_varphi - s.X1s * s.d_X1c_d_varphi - s.sG * s.Bbar * s.k3 * s.d_l_d_varphi / s.B0 - s.iotaN * (np.multiply(s.X1s, s.X1s) + np.multiply(s.X1c,s.X1c)))
+    tensor.pq = factor * (s.Y1s * s.d_Y1c_d_varphi - s.Y1c * s.d_Y1s_d_varphi + s.sG * s.Bbar * s.k3 * s.d_l_d_varphi / s.B0 + s.iotaN * (np.multiply(s.Y1s, s.Y1s) + np.multiply(s.Y1c, s.Y1c)))
     tensor.tt = s.sG * np.matmul(s.d_d_varphi, s.B0) / s.d_l_d_varphi
 
     s.grad_b_tensor = tensor
 
-    t = s.tangent_cylindrical.transpose()
-    p = s.p_cylindrical.transpose()
-    q = s.q_cylindrical.transpose()
+    t = s.tangent.transpose()
+    p = s.frame_p.transpose()
+    q = s.frame_q.transpose()
     self.grad_B_tensor_cylindrical = np.array([[
                               tensor.pp * p[i] * p[j] \
                             + tensor.qp * q[i] * p[j] + tensor.pq * p[i] * q[j] \
@@ -34,9 +35,10 @@ def calculate_grad_B_tensor(self):
                             + tensor.tt * t[i] * t[j]
                         for i in range(3)] for j in range(3)])
     
-    self.grad_B_colon_grad_B = tensor.tn * tensor.tn + tensor.nt * tensor.nt \
-        + tensor.bb * tensor.bb + tensor.nn * tensor.nn \
-        + tensor.nb * tensor.nb + tensor.bn * tensor.bn \
+    self.grad_B_colon_grad_B = tensor.tp * tensor.tp + tensor.pt * tensor.pt \
+        + tensor.tq * tensor.tq + tensor.qt * tensor.qt \
+        + tensor.qq * tensor.qq + tensor.pp * tensor.pp \
+        + tensor.pq * tensor.pq + tensor.qp * tensor.qp \
         + tensor.tt * tensor.tt
     
     self.L_grad_B = s.B0 * np.sqrt(2 / self.grad_B_colon_grad_B)

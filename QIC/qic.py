@@ -2,11 +2,15 @@ import numpy as np
 
 class QIC():
 
-    from r1calc import _residual, _jacobian, solve_sigma_equation, \
+    from QIC.r1calcLambda import _residual, _jacobian, solve_sigma_equation, \
         _determine_helicity, r1_diagnostics
-    from init_axis import init_axis, convert_to_spline
+    from QIC.init_axis import init_axis, convert_to_spline
+    from QIC.grad_B_tensor import calculate_grad_B_tensor
+    from QIC.util import B_mag
+    from QIC.plot import get_boundary
+    from QIC.curve_frame_to_cylindrical import curvilinear_frame_to_cylindrical
 
-    def __init__(self, rc, zs, rs = None, zc = None, nfp = 1, X1c = None, Y1c = None, sigma0 = 0, B0 = None, I2 = 0
+    def __init__(self, rc, zs, rs = None, zc = None, nfp = 1, X1c = None, Y1c = None, sigma0 = 0., B0 = None, I2 = 0
                  , sG = 1, spsi = 1, nphi = 61, B2s=0., B2c=0., p2=0., order="r1"):
         
         if rs == None and zc == None:
@@ -63,6 +67,8 @@ class QIC():
         self.p2 = p2
         self.order = order
         self.min_R0_threshold = 0.3
+
+        self.calculate()
     
 
     def calculate(self):
@@ -76,3 +82,4 @@ class QIC():
             self.calculate_r2()
             if self.order == 'r3':
                 self.calculate_r3()
+        self.calculate_grad_B_tensor()

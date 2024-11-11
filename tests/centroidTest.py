@@ -1,10 +1,12 @@
 import numpy as np
-from QIC.centroidFrame import get_FS_frame, get_Centroid_frame, get_kappa1_kappa2, centroid, get_kappa3, get_kappa1_kappa2_alt
+from QIC.centroidFrame import get_FS_frame, get_Centroid_frame, get_kappa1_kappa2, centroid, get_kappa3
 import matplotlib.pyplot as plt
+import os
+from pathlib import Path
 
 i=0
-IN_DIR = './input/'
-curve1 = np.load(IN_DIR + 'curve1.npy')
+IN_DIR = (Path(__file__).parent / ".." / "tests" / "input").resolve()
+curve1 = np.load(IN_DIR / 'curve1.npy')
 h = 1 / len(curve1[0])
 
 t, n, b, curvature, torsion = get_FS_frame(curve1[1], curve1[2], curve1[3])
