@@ -50,4 +50,7 @@ jobs:
       run: pip install .
 
     - name: Run unit tests
-      run: python3 -m unittest -v
+      run: 
+        cd tests
+        python3 -m unittest -v
+        cd..
