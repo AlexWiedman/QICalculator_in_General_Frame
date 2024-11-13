@@ -10,26 +10,26 @@ import unittest
 
 #logging.basicConfig(level=logging.DEBUG)
 
-@unittest.skip("")
+#@unittest.skip("")
 class Plotting_Test(unittest.TestCase):
-    def test_plot():
+    def test_plot(self):
         test = sec_5_1()
         plot(test, show=False)
         plt.close()
 
-    def test_B_fieldline():
+    def test_B_fieldline(self):
         test = sec_5_1()
         nphi = test.nphi
         B_fieldline(test, nphi=nphi, show=False)
         plt.close()
 
-    def test_plot_boundary():
+    def test_plot_boundary(self):
         test = sec_5_1()
         nphi = test.nphi
         plot_boundary(test, nphi=nphi, show=False)
         plt.close()
     
-    def test_plot_axis():
+    def test_plot_axis(self):
         test = sec_5_1()
         nphi = test.nphi
         plot_axis(test, nphi=nphi, show=False)
