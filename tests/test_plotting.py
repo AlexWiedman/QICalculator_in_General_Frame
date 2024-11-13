@@ -10,7 +10,6 @@ import unittest
 
 #logging.basicConfig(level=logging.DEBUG)
 
-#@unittest.skip("")
 class Plotting_Test(unittest.TestCase):
     def test_plot(self):
         test = sec_5_1()

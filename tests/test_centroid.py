@@ -4,16 +4,12 @@ from QIC.spectral_diff_matrix import spectral_diff_matrix
 import matplotlib.pyplot as plt
 import unittest
 
-#@unittest.skip("")
 class CentroidTest(unittest.TestCase):
     
     def test_centroid_frame(self):
         exCurve = np.load('./input/curve1_10xPoints.npy')
         h = 1 / len(exCurve[0])
         t, n, b, curvature, torsion = get_FS_frame(exCurve[1], exCurve[2], exCurve[3])
-
-        #finite difference
-        dtdpFinite = (np.roll(t, -1, axis=0) - np.roll(t, 1, axis=0)) / (2 * h)
 
         #analytic
         dldp = np.linalg.norm(exCurve[1], axis=1)
@@ -23,8 +19,7 @@ class CentroidTest(unittest.TestCase):
         for idx, _ in enumerate(n):
             torsionAlt[idx] = -np.dot(bprime[idx],n[idx])
 
-        rtol = 1e-13
-        atol = 1e-13
+        atol = 0.33
 
         c = centroid(exCurve[0], exCurve[1])
         
@@ -33,13 +28,13 @@ class CentroidTest(unittest.TestCase):
         pprime = (np.roll(p, -1, axis=0) - np.roll(p, 1, axis=0))/(2 * h * dldp[:, None])
         qprime = (np.roll(q, -1, axis=0) - np.roll(q, 1, axis=0))/(2 * h * dldp[:, None])
 
-        np.testing.assert_allclose(dpdphi / dldp[:, None], pprime, atol = 0.33)
-        np.testing.assert_allclose(dqdphi / dldp[:, None], qprime, atol = 0.33)
+        np.testing.assert_allclose(dpdphi / dldp[:, None], pprime, atol = atol)
+        np.testing.assert_allclose(dqdphi / dldp[:, None], qprime, atol = atol)
 
 
         k1, k2 = get_kappa1_kappa2(p, q, n, curvature)
 
-        np.testing.assert_allclose(np.sqrt(k1**2+k2**2), curvature, atol = 0.33)
+        np.testing.assert_allclose(np.sqrt(k1**2+k2**2), curvature, atol = atol)
 
         k3 = get_kappa3(dpdphi, dqdphi, q, p, dldp)
 
@@ -64,9 +59,9 @@ class CentroidTest(unittest.TestCase):
 
         k1analytic, k2analytic = get_kappa1_kappa2_alt(dpdphi, dqdphi, t, dldp)
 
-        np.testing.assert_allclose(k1, k1analytic, atol = 0.33)
-        np.testing.assert_allclose(k2, k2analytic, atol = 0.33)
-        np.testing.assert_allclose(k3, k3alt, atol = 0.33)
+        np.testing.assert_allclose(k1, k1analytic, atol = atol)
+        np.testing.assert_allclose(k2, k2analytic, atol = atol)
+        np.testing.assert_allclose(k3, k3alt, atol = atol)
 
 
 if __name__ == "__main__":

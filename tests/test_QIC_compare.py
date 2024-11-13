@@ -9,6 +9,7 @@ from QIC.qic import QIC
 from QIC.centroidFrame import get_centroid_X1_Y1
 from QIC.util import cylindrical_to_centroid
 from QIC.init_axis import init_axis
+from qsc.qsc import Qsc
 
 logger = logging.getLogger(__name__)
 
@@ -141,9 +142,27 @@ def sec_5_1():
     
     return stel
 
-#import logging
-#logging.basicConfig(level=logging.INFO)
+nphi = 63
+stel_qsc = Qsc.from_paper('r1 section 5.2', nphi=nphi)
+X1cfs = stel_qsc.X1c
+Y1cfs = stel_qsc.Y1c
+X1sfs = stel_qsc.X1s
+Y1sfs = stel_qsc.Y1s
 
-s = sec_5_1()
+rc=stel_qsc.rc
+zs=stel_qsc.zs
 
-print(s.iota)
+nfp = stel_qsc.nfp
+stel_qic = QIC(rc, zs, nfp = nfp, nphi=nphi)
+p = stel_qic.frame_p
+q = stel_qic.frame_q
+n = stel_qic.normal
+b = stel_qic.binormal
+
+X1c, Y1c, X1s, Y1s = get_centroid_X1_Y1(p, q, n, b, [X1cfs, X1sfs], [Y1cfs, Y1sfs])
+
+stel_qic = QIC(rc, zs, X1c=X1c, Y1c=Y1c, nfp = nfp, nphi = nphi, sigma0=stel_qsc.sigma0)
+
+np.testing.assert_allclose(X1s, stel_qic.X1s)
+np.testing.assert_allclose(Y1s, stel_qic.Y1s)
+#np.testing.assert_allclose(stel_qsc.iota, stel_qic.iota)
