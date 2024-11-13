@@ -163,6 +163,8 @@ X1c, Y1c, X1s, Y1s = get_centroid_X1_Y1(p, q, n, b, [X1cfs, X1sfs], [Y1cfs, Y1sf
 
 stel_qic = QIC(rc, zs, X1c=X1c, Y1c=Y1c, nfp = nfp, nphi = nphi, sigma0=stel_qsc.sigma0)
 
+print(stel_qic.iota)
+
 np.testing.assert_allclose(X1s, stel_qic.X1s)
 np.testing.assert_allclose(Y1s, stel_qic.Y1s)
-#np.testing.assert_allclose(stel_qsc.iota, stel_qic.iota)
+np.testing.assert_allclose(stel_qsc.iota, stel_qic.iota)

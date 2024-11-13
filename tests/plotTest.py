@@ -4,7 +4,7 @@ from QIC.qic import QIC
 import numpy as np
 import logging
 from QIC.plot import plot, B_fieldline, plot_boundary, plot_axis
-from test_QIC_compare import sec_5_1
+from qsc.qsc import Qsc
 
 #logging.basicConfig(level=logging.DEBUG)
 
@@ -14,7 +14,7 @@ zs = [0, -0.25]
 # Change X1c Y1c inputs from the FS frame X1c Y1c to Centroid X1c Y1c (some rotation)
 #test = QIC(rc, zs)
 
-test = sec_5_1()
+test = Qsc.from_paper("r1 section 5.1", nphi=63)
 nphi = test.nphi
 
 #print(test.k1)

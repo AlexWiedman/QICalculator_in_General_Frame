@@ -4,7 +4,7 @@ from QIC.qic import QIC
 import numpy as np
 import logging
 from QIC.plot import plot, B_fieldline, plot_boundary, plot_axis
-from test_QIC_compare import sec_5_1
+from qsc.qsc import Qsc
 import matplotlib.pyplot as plt
 import unittest
 
@@ -12,24 +12,24 @@ import unittest
 
 class Plotting_Test(unittest.TestCase):
     def test_plot(self):
-        test = sec_5_1()
+        test = Qsc.from_paper("r1 section 5.1", nphi=63)
         plot(test, show=False)
         plt.close()
 
     def test_B_fieldline(self):
-        test = sec_5_1()
+        test = Qsc.from_paper("r1 section 5.1", nphi=63)
         nphi = test.nphi
         B_fieldline(test, nphi=nphi, show=False)
         plt.close()
 
     def test_plot_boundary(self):
-        test = sec_5_1()
+        test = Qsc.from_paper("r1 section 5.1", nphi=63)
         nphi = test.nphi
         plot_boundary(test, nphi=nphi, show=False)
         plt.close()
     
     def test_plot_axis(self):
-        test = sec_5_1()
+        test = Qsc.from_paper("r1 section 5.1", nphi=63)
         nphi = test.nphi
         plot_axis(test, nphi=nphi, show=False)
         plt.close()
