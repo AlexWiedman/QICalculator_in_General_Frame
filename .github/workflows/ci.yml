@@ -45,12 +45,19 @@ jobs:
 
     - name: env after adding python
       run: env
+    
+    - name: Download and Install pyQSC
+      run: |
+        git clone https://github.com/landreman/pyQSC.git
+        cd pyQSC
+        pip install .
 
     - name: Install QIC
       run: pip install .
+
+    
 
     - name: Run unit tests
       run: |
         cd tests
         python3 -m unittest -v
-        cd..
