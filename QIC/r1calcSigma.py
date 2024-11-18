@@ -47,7 +47,7 @@ def solve_sigma_equation(self):
 
     self.sigma = newton(self._residual, x0, jac=self._jacobian)
     self.iota = self.sigma[0]
-    self.iotaN = self.iota + self.helicity * self.nfp
+    self.iotaN = self.iota
     self.sigma[0] = self.sigma0
     
 

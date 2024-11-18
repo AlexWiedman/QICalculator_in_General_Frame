@@ -76,7 +76,6 @@ class QIC_v_QSC(unittest.TestCase):
             np.testing.assert_allclose(Y1s, stel_qic.Y1s)
             np.testing.assert_allclose(stel_qsc.iota, stel_qic.iota)
 
-    @unittest.skip("X1s and Y1s are correct, but iota is different")
     def test_sec_5_2(self):
             nphi = 63
             stel_qsc = Qsc.from_paper('r1 section 5.2', nphi=nphi)
@@ -103,7 +102,7 @@ class QIC_v_QSC(unittest.TestCase):
             np.testing.assert_allclose(Y1s, stel_qic.Y1s)
             np.testing.assert_allclose(stel_qsc.iota, stel_qic.iota)
     
-    @unittest.skip
+    @unittest.skip("Not stellarator symmetric")
     def test_sec_5_3(self):
             nphi = 63
             stel_qsc = Qsc.from_paper('r1 section 5.3', nphi=nphi)

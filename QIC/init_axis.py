@@ -85,11 +85,11 @@ def init_axis(self):
         self.d_d_varphi[j,:] = self.d_d_phi[j,:] / self.d_varphi_d_phi[j]
 
     # Compute the Boozer toroidal angle:
-    self.varphi = np.zeros(nphi)
-    for j in range(1, nphi):
-        # To get toroidal angle on the full mesh, we need d_l_d_phi on the half mesh.
-        self.varphi[j] = self.varphi[j-1] + (d_l_d_phi[j-1] + d_l_d_phi[j])
-    self.varphi = self.varphi * (0.5 * d_phi * 2 * np.pi / axis_length)
+    mat = self.d_d_phi.copy()
+    mat[0,0] = 1
+    rhs = self.d_varphi_d_phi - 1
+    nu = np.linalg.solve(mat, rhs)
+    self.varphi = phi + nu
 
     # Add all results to self:
     self.phi = phi
