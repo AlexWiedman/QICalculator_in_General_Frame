@@ -53,10 +53,10 @@ class QIC_v_QSC(unittest.TestCase):
     def test_sec_5_1(self):
             nphi = 63
             stel_qsc = Qsc.from_paper('r1 section 5.1', nphi=nphi)
-            X1cfs = stel_qsc.X1c
-            Y1cfs = stel_qsc.Y1c
-            X1sfs = stel_qsc.X1s
-            Y1sfs = stel_qsc.Y1s
+            X1cfs = stel_qsc.X1c_untwisted
+            Y1cfs = stel_qsc.Y1c_untwisted
+            X1sfs = stel_qsc.X1s_untwisted
+            Y1sfs = stel_qsc.Y1s_untwisted
 
             rc=stel_qsc.rc
             zs=stel_qsc.zs
@@ -79,10 +79,10 @@ class QIC_v_QSC(unittest.TestCase):
     def test_sec_5_2(self):
             nphi = 63
             stel_qsc = Qsc.from_paper('r1 section 5.2', nphi=nphi)
-            X1cfs = stel_qsc.X1c
-            Y1cfs = stel_qsc.Y1c
-            X1sfs = stel_qsc.X1s
-            Y1sfs = stel_qsc.Y1s
+            X1cfs = stel_qsc.X1c_untwisted
+            Y1cfs = stel_qsc.Y1c_untwisted
+            X1sfs = stel_qsc.X1s_untwisted
+            Y1sfs = stel_qsc.Y1s_untwisted
 
             rc=stel_qsc.rc
             zs=stel_qsc.zs
@@ -106,10 +106,10 @@ class QIC_v_QSC(unittest.TestCase):
     def test_sec_5_3(self):
             nphi = 63
             stel_qsc = Qsc.from_paper('r1 section 5.3', nphi=nphi)
-            X1cfs = stel_qsc.X1c
-            Y1cfs = stel_qsc.Y1c
-            X1sfs = stel_qsc.X1s
-            Y1sfs = stel_qsc.Y1s
+            X1cfs = stel_qsc.X1c_untwisted
+            Y1cfs = stel_qsc.Y1c_untwisted
+            X1sfs = stel_qsc.X1s_untwisted
+            Y1sfs = stel_qsc.Y1s_untwisted
 
             rc=stel_qsc.rc
             zs=stel_qsc.zs
