@@ -23,9 +23,9 @@ def calculate_grad_B_tensor(self):
 
     s.grad_b_tensor = tensor
 
-    t = s.tangent.transpose()
-    p = s.frame_p.transpose()
-    q = s.frame_q.transpose()
+    t = s.tangent_cartesian.transpose()
+    p = s.frame_p_cartesian.transpose()
+    q = s.frame_q_cartesian.transpose()
     self.grad_B_tensor_cylindrical = np.array([[
                               tensor.pp * p[i] * p[j] \
                             + tensor.qp * q[i] * p[j] + tensor.pq * p[i] * q[j] \

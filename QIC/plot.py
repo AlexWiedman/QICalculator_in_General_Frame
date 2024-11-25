@@ -195,6 +195,9 @@ def get_boundary(self, r=0.1, ntheta=40, nphi=130, ntheta_fourier=20, mpol=13, n
     '''
     # Get surface shape at fixed off-axis toroidal angle phi
     R_2D, Z_2D, _ = self.curvilinear_frame_to_cylindrical(r, ntheta=ntheta_fourier)
+    #for n in range(nphi):
+        #plt.plot(R_2D[:,n], Z_2D[:,n])
+
 
     # Get Fourier coefficients in order to plot with arbitrary resolution
     RBC, RBS, ZBC, ZBS = to_Fourier(R_2D, Z_2D, self.nfp, mpol=mpol, ntor=ntor, lasym=self.lasym)
@@ -217,6 +220,8 @@ def get_boundary(self, r=0.1, ntheta=40, nphi=130, ntheta_fourier=20, mpol=13, n
     x_2D_plot = R_2Dnew * np.cos(phi1D)
     y_2D_plot = R_2Dnew * np.sin(phi1D)
     z_2D_plot = Z_2Dnew
+
+    #plt.plot(R_2Dnew[:,int(nphi/(2*self.nfp))], z_2D_plot[:,int(nphi/(2*self.nfp))])
 
     return x_2D_plot, y_2D_plot, z_2D_plot, R_2Dnew
 
@@ -315,6 +320,7 @@ def plot_boundary(self, r=0.1, ntheta=80, nphi=150, ntheta_fourier=20, nsections
         # Plot location of the axis
         plt.plot(self.R0_func(phi), self.Z0_func(phi), marker="x", linewidth=2, label=label, color=color)
         # Plot poloidal cross-section
+        #plt.plot(R_2D_plot[:,int(nphi/(2*self.nfp))], z_2D_plot[:,int(nphi/(2*self.nfp))], color=color)
         plt.plot(R_2D_spline(phi), z_2D_spline(phi), color=color)
     plt.xlabel('R (meters)')
     plt.ylabel('Z (meters)')

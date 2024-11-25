@@ -51,7 +51,7 @@ jobs:
     
     - name: Download and Install pyQSC
       run: |
-        git clone https://github.com/landreman/pyQSC.git
+        git clone -b more_accurate_varphi --single-branch https://github.com/landreman/pyQSC.git
         cd pyQSC
         pip install .
 

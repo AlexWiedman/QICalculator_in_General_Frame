@@ -113,10 +113,46 @@ def init_axis(self):
 
     np.testing.assert_allclose(np.sqrt(k1**2+k2**2), curvature, atol=1e-15)
 
+    self.tangent_cartesian = tangent
+    self.frame_p_cartesian = p
+    self.frame_q_cartesian = q
+
     #self.min_R0 = fourier_minimum(self.R0)
-    self.tangent = tangent
-    self.frame_p = p
-    self.frame_q = q
+    #TODO tangent later
+
+    tan_R = np.zeros(nphi)
+    tan_phi = np.zeros(nphi)
+    tan_z = np.zeros(nphi)
+
+    p_R = np.zeros(nphi)
+    p_phi = np.zeros(nphi)
+    p_z = np.zeros(nphi)
+
+    q_R = np.zeros(nphi)
+    q_phi = np.zeros(nphi)
+    q_z = np.zeros(nphi)
+
+    for phiIndex in range(nphi):
+        phi0 = phi[phiIndex]
+        sinphi0 = np.sin(phi0)
+        cosphi0 = np.cos(phi0)
+        
+        p_R[phiIndex] = p[phiIndex,0] * cosphi0 + p[phiIndex,1] * sinphi0
+        p_phi[phiIndex] = -p[phiIndex,0] * sinphi0 + p[phiIndex,1] * cosphi0
+        p_z[phiIndex] = p[phiIndex,2]
+
+        q_R[phiIndex] = q[phiIndex,0] * cosphi0 + q[phiIndex,1] * sinphi0
+        q_phi[phiIndex] = -q[phiIndex,0] * sinphi0 + q[phiIndex,1] * cosphi0
+        q_z[phiIndex] = q[phiIndex,2]
+
+        tan_R[phiIndex] = tangent[phiIndex,0] * cosphi0 + tangent[phiIndex,1] * sinphi0
+        tan_phi[phiIndex] = -tangent[phiIndex,0] * sinphi0 + tangent[phiIndex,1] * cosphi0
+        tan_z[phiIndex] = tangent[phiIndex,2]
+
+
+    self.tangent_cylindrical = np.array([tan_R, tan_phi, tan_z]).T
+    self.frame_p_cylindrical =  np.array([p_R, p_phi, p_z]).T
+    self.frame_q_cylindrical = np.array([q_R, q_phi, q_z]).T
     # if i remember correctly, this version of Bbar doesn't make sense and needs to be something else.
     self.Bbar = self.spsi * self.B0
     self.abs_G0_over_B0 = abs_G0_over_B0
@@ -133,15 +169,15 @@ def init_axis(self):
                                               for i in range(len(self.zs))]))
     
     # Spline interpolants for the cartesian components of the Centroid frame:
-    self.frame_p_x_spline         = self.convert_to_spline(self.frame_p[:,0])
-    self.frame_p_y_spline       = self.convert_to_spline(self.frame_p[:,1])
-    self.frame_p_z_spline         = self.convert_to_spline(self.frame_p[:,2])
-    self.frame_q_x_spline         = self.convert_to_spline(self.frame_q[:,0])
-    self.frame_q_y_spline       = self.convert_to_spline(self.frame_q[:,1])
-    self.frame_q_z_spline         = self.convert_to_spline(self.frame_q[:,2])
-    self.tangent_x_spline         = self.convert_to_spline(self.tangent[:,0])
-    self.tangent_y_spline       = self.convert_to_spline(self.tangent[:,1])
-    self.tangent_z_spline         = self.convert_to_spline(self.tangent[:,2])
+    self.frame_p_R_spline         = self.convert_to_spline(self.frame_p_cylindrical[:,0])
+    self.frame_p_phi_spline       = self.convert_to_spline(self.frame_p_cylindrical[:,1])
+    self.frame_p_z_spline         = self.convert_to_spline(self.frame_p_cylindrical[:,2])
+    self.frame_q_R_spline         = self.convert_to_spline(self.frame_q_cylindrical[:,0])
+    self.frame_q_phi_spline       = self.convert_to_spline(self.frame_q_cylindrical[:,1])
+    self.frame_q_z_spline         = self.convert_to_spline(self.frame_q_cylindrical[:,2])
+    self.tangent_R_spline         = self.convert_to_spline(self.tangent_cylindrical[:,0])
+    self.tangent_phi_spline       = self.convert_to_spline(self.tangent_cylindrical[:,1])
+    self.tangent_z_spline         = self.convert_to_spline(self.tangent_cylindrical[:,2])
 
     # Spline interpolant for nu = varphi - phi, used for plotting
     self.nu_spline = self.convert_to_spline(self.varphi - self.phi)

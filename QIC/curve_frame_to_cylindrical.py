@@ -17,15 +17,15 @@ def curvilinear_frame_to_cylindrical_residual_func(phi0, phi_target, qsc):
     R0_at_phi0   = qsc.R0_func(phi0)
     X_at_phi0    = qsc.X_spline(phi0)
     Y_at_phi0    = qsc.Y_spline(phi0)
-    frame_p_x     = qsc.frame_p_x_spline(phi0)
-    frame_p_y   = qsc.frame_p_y_spline(phi0)
-    frame_q_x   = qsc.frame_q_x_spline(phi0)
-    frame_q_y = qsc.frame_q_y_spline(phi0)
+    frame_p_R     = qsc.frame_p_R_spline(phi0)
+    frame_p_phi   = qsc.frame_p_phi_spline(phi0)
+    frame_q_R   = qsc.frame_q_R_spline(phi0)
+    frame_q_phi = qsc.frame_q_phi_spline(phi0)
 
-    #frame_p_x   =   frame_p_R * cosphi0 -   frame_p_phi * sinphi0
-    #frame_p_y   =   frame_p_R * sinphi0 +   frame_p_phi * cosphi0
-    #frame_q_x = frame_q_R * cosphi0 - frame_q_phi * sinphi0
-    #frame_q_y = frame_q_R * sinphi0 + frame_q_phi * cosphi0
+    frame_p_x   =   frame_p_R * cosphi0 -   frame_p_phi * sinphi0
+    frame_p_y   =   frame_p_R * sinphi0 +   frame_p_phi * cosphi0
+    frame_q_x = frame_q_R * cosphi0 - frame_q_phi * sinphi0
+    frame_q_y = frame_q_R * sinphi0 + frame_q_phi * cosphi0
 
     total_x = R0_at_phi0 * cosphi0 + X_at_phi0 * frame_p_x + Y_at_phi0 * frame_q_x
     total_y = R0_at_phi0 * sinphi0 + X_at_phi0 * frame_p_y + Y_at_phi0 * frame_q_y
@@ -64,17 +64,17 @@ def curvilinear_frame_to_cylindrical_1_point(phi0, qsc):
     X_at_phi0    = qsc.X_spline(phi0)
     Y_at_phi0    = qsc.Y_spline(phi0)
     Z_at_phi0    = qsc.Z_spline(phi0)
-    p_vector_x    = qsc.frame_p_x_spline(phi0)
-    p_vector_y   = qsc.frame_p_y_spline(phi0)
+    p_vector_R    = qsc.frame_p_R_spline(phi0)
+    p_vector_phi   = qsc.frame_p_phi_spline(phi0)
     p_vector_z     = qsc.frame_p_z_spline(phi0)
-    q_vector_x   = qsc.frame_q_x_spline(phi0)
-    q_vector_y = qsc.frame_q_y_spline(phi0)
+    q_vector_R   = qsc.frame_q_R_spline(phi0)
+    q_vector_phi = qsc.frame_q_phi_spline(phi0)
     q_vector_z   = qsc.frame_q_z_spline(phi0)
 
-    #p_vector_x   =   p_vector_R * cosphi0 -   p_vector_phi * sinphi0
-    #p_vector_y   =   p_vector_R * sinphi0 +   p_vector_phi * cosphi0
-    #q_vector_x = q_vector_R * cosphi0 - q_vector_phi * sinphi0
-    #q_vector_y = q_vector_R * sinphi0 + q_vector_phi * cosphi0
+    p_vector_x   =   p_vector_R * cosphi0 -   p_vector_phi * sinphi0
+    p_vector_y   =   p_vector_R * sinphi0 +   p_vector_phi * cosphi0
+    q_vector_x = q_vector_R * cosphi0 - q_vector_phi * sinphi0
+    q_vector_y = q_vector_R * sinphi0 + q_vector_phi * cosphi0
 
     total_x = R0_at_phi0 * cosphi0 + X_at_phi0 * p_vector_x + Y_at_phi0 * q_vector_x
     total_y = R0_at_phi0 * sinphi0 + X_at_phi0 * p_vector_y + Y_at_phi0 * q_vector_y

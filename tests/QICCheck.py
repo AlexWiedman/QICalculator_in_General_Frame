@@ -26,8 +26,8 @@ def test_sec_5_1():
 
         nfp = stel_qsc.nfp
         stel_qic = QIC(rc, zs, nfp = nfp, nphi=nphi)
-        p = stel_qic.frame_p
-        q = stel_qic.frame_q
+        p = stel_qic.frame_p_cartesian
+        q = stel_qic.frame_q_cartesian
         n = stel_qic.normal
         b = stel_qic.binormal
 
@@ -49,8 +49,8 @@ def test_sec_5_2():
 
         nfp = stel_qsc.nfp
         stel_qic = QIC(rc, zs, nfp = nfp, nphi=nphi)
-        p = stel_qic.frame_p
-        q = stel_qic.frame_q
+        p = stel_qic.frame_p_cartesian
+        q = stel_qic.frame_q_cartesian
         n = stel_qic.normal
         b = stel_qic.binormal
 
