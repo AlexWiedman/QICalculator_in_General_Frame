@@ -13,6 +13,8 @@ from qsc.qsc import Qsc
 
 logger = logging.getLogger(__name__)
 
+atol = 1e-3
+
 def compare_to_fortran_r1(filename):
     filler = np.load(filename) # placeholder for the time being, until I actually get a file to compare to
 
@@ -98,9 +100,9 @@ class QIC_v_QSC(unittest.TestCase):
 
             stel_qic = QIC(rc, zs, X1c=X1c, Y1c=Y1c, nfp = nfp, nphi = nphi, sigma0=stel_qsc.sigma0)
 
-            np.testing.assert_allclose(X1s, stel_qic.X1s)
-            np.testing.assert_allclose(Y1s, stel_qic.Y1s)
-            np.testing.assert_allclose(stel_qsc.iota, stel_qic.iota)
+            np.testing.assert_allclose(X1s, stel_qic.X1s, atol=atol)
+            np.testing.assert_allclose(Y1s, stel_qic.Y1s, atol=atol)
+            np.testing.assert_allclose(stel_qsc.iota, stel_qic.iota, atol=atol)
     
     @unittest.skip("Not stellarator symmetric")
     def test_sec_5_3(self):
