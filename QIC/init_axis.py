@@ -72,8 +72,8 @@ def init_axis(self):
     k3 = get_kappa3(dpdphi, dqdphi, q, p, dldp)
 
     
-    self.normal = normal
-    self.binormal = binormal
+    self.normal_cartesian = normal
+    self.binormal_cartesian = binormal
     self._determine_helicity()
 
     axis_length = np.sum(d_l_d_phi) * d_phi * nfp

@@ -28,8 +28,8 @@ def test_sec_5_1():
         stel_qic = QIC(rc, zs, nfp = nfp, nphi=nphi)
         p = stel_qic.frame_p_cartesian
         q = stel_qic.frame_q_cartesian
-        n = stel_qic.normal
-        b = stel_qic.binormal
+        n = stel_qic.normal_cartesian
+        b = stel_qic.binormal_cartesian
 
         X1c, Y1c, X1s, Y1s = get_centroid_X1_Y1(p, q, n, b, [X1cfs, X1sfs], [Y1cfs, Y1sfs])
 
@@ -51,8 +51,8 @@ def test_sec_5_2():
         stel_qic = QIC(rc, zs, nfp = nfp, nphi=nphi)
         p = stel_qic.frame_p_cartesian
         q = stel_qic.frame_q_cartesian
-        n = stel_qic.normal
-        b = stel_qic.binormal
+        n = stel_qic.normal_cartesian
+        b = stel_qic.binormal_cartesian
 
         X1c, Y1c, X1s, Y1s = get_centroid_X1_Y1(p, q, n, b, [X1cfs, X1sfs], [Y1cfs, Y1sfs])
 
@@ -73,10 +73,10 @@ def test_sec_5_3():
 
         nfp = stel_qsc.nfp
         stel_qic = QIC(rc, zs, nfp = nfp, nphi=nphi)
-        p = stel_qic.frame_p
-        q = stel_qic.frame_q
-        n = stel_qic.normal
-        b = stel_qic.binormal
+        p = stel_qic.frame_p_cartesian
+        q = stel_qic.frame_q_cartesian
+        n = stel_qic.normal_cartesian
+        b = stel_qic.binormal_cartesian
 
         X1c, Y1c, X1s, Y1s = get_centroid_X1_Y1(p, q, n, b, [X1cfs, X1sfs], [Y1cfs, Y1sfs])
 
