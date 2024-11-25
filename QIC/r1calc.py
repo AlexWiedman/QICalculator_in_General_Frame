@@ -66,13 +66,13 @@ def _determine_helicity(self):
     """
     quadrant = np.zeros(self.nphi + 1)
     for j in range(self.nphi):
-        if self.normal[j,0] >= 0:
-            if self.normal[j,2] >= 0:
+        if self.normal_cartesian[j,0] >= 0:
+            if self.normal_cartesian[j,2] >= 0:
                 quadrant[j] = 1
             else:
                 quadrant[j] = 4
         else:
-            if self.normal[j,2] >= 0:
+            if self.normal_cartesian[j,2] >= 0:
                 quadrant[j] = 2
             else:
                 quadrant[j] = 3
