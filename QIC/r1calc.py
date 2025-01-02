@@ -1,9 +1,3 @@
-"""
-Ok so some minor concerns here, a lot of the original r1 calculation uses a lot of 'self.' variables. 
-Many of these are dependent on curvature and so probably are a bit different now.
-Specifically, the _residual function needs to be figured out, and the jacobian too. (A lot of this scares me)
-"""
-
 import numpy as np
 import time
 from newtonMethod import newton

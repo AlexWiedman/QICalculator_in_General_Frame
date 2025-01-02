@@ -1,9 +1,3 @@
-"""
-Ok so some minor concerns here, a lot of the original r1 calculation uses a lot of 'self.' variables. 
-Many of these are dependent on curvature and so probably are a bit different now.
-Specifically, the _residual function needs to be figured out, and the jacobian too. (A lot of this scares me)
-"""
-
 import numpy as np
 import time
 from QIC.newtonMethod import newton
@@ -20,7 +14,6 @@ def _residual(self, x):
     L2 = np.power(self.X1c,2) + np.power(self.Y1c,2)
     beta = -1 * self.Bbar / (self.B0 * L2)
 
-    #Is the d_d_varphi here the issue?
     X1cP = np.matmul(self.d_d_varphi, self.X1c)
     Y1cP = np.matmul(self.d_d_varphi, self.Y1c)
     B0P = np.matmul(self.d_d_varphi, self.B0)
@@ -40,7 +33,6 @@ def _jacobian(self, x):
     sigma[0] = self.sigma0
     iota = x[0]
 
-    #Is this the issue?
     X1cP = np.matmul(self.d_d_varphi, self.X1c)
     Y1cP = np.matmul(self.d_d_varphi, self.Y1c)
     B0P = np.matmul(self.d_d_varphi, self.B0)
@@ -112,10 +104,8 @@ def r1_diagnostics(self):
     self.B1c = (self.X1c * self.k1 + self.Y1c * self.k2) * self.B0
     self.B1s = (self.X1s * self.k1 + self.Y1s * self.k2) * self.B0
 
-    # If helicity is nonzero, then the original X1s/X1c/Y1s/Y1c variables are defined with respect to a "poloidal" angle that
-    # is actually helical, with the theta=0 curve wrapping around the magnetic axis as you follow phi around toroidally. Therefore
-    # here we convert to an untwisted poloidal angle, such that the theta=0 curve does not wrap around the axis.
-    # helicity stuff should be the same as in pyQSC, not affected by the change to equations.
+    # Helicity is not currently implemented, since its unnecessary in the centroid frame.
+    # It may be important in a completely general frame that does twist, and this should be taken into account in later versions
     #if self.helicity == 0:
     if True:
         self.X1s_untwisted = self.X1s
