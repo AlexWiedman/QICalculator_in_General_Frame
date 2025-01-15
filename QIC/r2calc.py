@@ -157,3 +157,71 @@ def r2calc(self):
     eqA42_Y20 = -X1c*fx0_Y20 + X1s*fxs_Y20 + X1c*fxc_Y20 - Y1c*fy0_Y20 + Y1s*fys_Y20 + Y1c*fyc_Y20
     eqA42_Y2s = -X1c*fx0_Y2s + X1s*fxs_Y2s + X1c*fxc_Y2s - Y1c*fy0_Y2s + Y1s*fys_Y2s + Y1c*fyc_Y2s
     eqA42_Y2c = -X1c*fx0_Y2c + X1s*fxs_Y2c + X1c*fxc_Y2c - Y1c*fy0_Y2c + Y1s*fys_Y2c + Y1c*fyc_Y2c
+
+    matrix = np.zeros((6 * nphi, 6 * nphi))
+    right_hand_side = np.zeros(6 * nphi)
+    for j in range(nphi):
+        #X20 terms
+        matrix[j,               0:nphi      ] = eqA32_X20
+        matrix[j+nphi,          0:nphi      ] = eqA33_X20
+        matrix[j+2*nphi,        0:nphi      ] = eqA35_X20
+        matrix[j+3*nphi,        0:nphi      ] = eqA36_X20 
+        matrix[j+4*nphi,        0:nphi      ] = eqA41_X20
+        matrix[j+5*nphi,        0:nphi      ] = eqA42_X20
+        #X2c terms
+        matrix[j,               nphi:2*nphi ] = eqA32_X2c
+        matrix[j+nphi,          nphi:2*nphi ] = eqA33_X2c 
+        matrix[j+2*nphi,        nphi:2*nphi ] = eqA35_X2c
+        matrix[j+3*nphi,        nphi:2*nphi ] = eqA36_X2c 
+        matrix[j+4*nphi,        nphi:2*nphi ] = eqA41_X2c
+        matrix[j+5*nphi,        nphi:2*nphi ] = eqA42_X2c
+        #X2s terms
+        matrix[j,               2*nphi:3*nphi] = eqA32_X2s
+        matrix[j+nphi,          2*nphi:3*nphi] = eqA33_X2s 
+        matrix[j+2*nphi,        2*nphi:3*nphi] = eqA35_X2s
+        matrix[j+3*nphi,        2*nphi:3*nphi] = eqA36_X2s 
+        matrix[j+4*nphi,        2*nphi:3*nphi] = eqA41_X2s
+        matrix[j+5*nphi,        2*nphi:3*nphi] = eqA42_X2s
+        #Y20 terms
+        matrix[j,               3*nphi:4*nphi] = eqA32_Y20
+        matrix[j+nphi,          3*nphi:4*nphi] = eqA33_Y20
+        matrix[j+2*nphi,        3*nphi:4*nphi] = eqA35_Y20
+        matrix[j+3*nphi,        3*nphi:4*nphi] = eqA36_Y20
+        matrix[j+4*nphi,        3*nphi:4*nphi] = eqA41_Y20
+        matrix[j+5*nphi,        3*nphi:4*nphi] = eqA42_Y20
+        #Y2c terms
+        matrix[j,               4*nphi:5*nphi] = eqA32_Y2c
+        matrix[j+nphi,          4*nphi:5*nphi] = eqA33_Y2c
+        matrix[j+2*nphi,        4*nphi:5*nphi] = eqA35_Y2c
+        matrix[j+3*nphi,        4*nphi:5*nphi] = eqA36_Y2c
+        matrix[j+4*nphi,        4*nphi:5*nphi] = eqA41_Y2c
+        matrix[j+5*nphi,        4*nphi:5*nphi] = eqA42_Y2c
+        #Y2s terms
+        matrix[j,               5*nphi:6*nphi] = eqA32_Y2s
+        matrix[j+nphi,          5*nphi:6*nphi] = eqA33_Y2s
+        matrix[j+2*nphi,        5*nphi:6*nphi] = eqA35_Y2s
+        matrix[j+3*nphi,        5*nphi:6*nphi] = eqA36_Y2s
+        matrix[j+4*nphi,        5*nphi:6*nphi] = eqA41_Y2s
+        matrix[j+5*nphi,        5*nphi:6*nphi] = eqA42_Y2s
+
+
+    #Inhomogeneous
+    right_hand_side[0:nphi               ] = -(eqA32_inhomogeneous)
+    right_hand_side[nphi:2*nphi          ] = -(eqA33_inhomogeneous)
+    right_hand_side[2*nphi:3*nphi        ] = -(eqA35_inhomogeneous)
+    right_hand_side[3*nphi:4*nphi        ] = -(eqA36_inhomogeneous)
+    right_hand_side[4*nphi:5*nphi        ] = -(eqA41_inhomogeneous)
+    right_hand_side[5*nphi:6*nphi        ] = -(eqA42_inhomogeneous)
+    
+    solution = np.linalg.solve(matrix, right_hand_side)
+
+    X20 = solution[0:nphi]
+    X2c = solution[nphi:2*nphi]
+    X2s = solution[2*nphi:3*nphi]
+    Y20 = solution[3*nphi:4*nphi]
+    Y2c = solution[4*nphi:5*nphi]
+    Y2s = solution[5*nphi:6*nphi]
+
+    # Check to make sure the equations actually sum to 0
+
+    #B20 = 
