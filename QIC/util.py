@@ -6,6 +6,10 @@ class Struct():
     pass
 
 
+
+mu0 = 4 * np.pi * 1e-7
+
+
 def to_Fourier(R_2D, Z_2D, nfp, mpol, ntor, lasym):
     """
     This function takes two 2D arrays (R_2D and Z_2D), which contain

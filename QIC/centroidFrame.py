@@ -115,6 +115,31 @@ def get_centroid_X1_Y1(p, q, n, b, X1fs, Y1fs):
 
     return X1c, Y1c, X1s, Y1s
 
+def get_centroid_X2_Y2(p, q, n, b, X2fs, Y2fs):
+    # calculates X2 and Y2 in the centroid frame from the p and q vectors from centroid frame, as well as the n and b vectors and X1 and Y1 in the Frenet-Serret frame
+
+    X20 = np.empty(len(X2fs[0]))
+    X2c = np.empty(len(X2fs[1]))
+    X2s = np.empty(len(X2fs[2]))
+    Y20 = np.empty(len(X2fs[0]))
+    Y2c = np.empty(len(Y2fs[1]))
+    Y2s = np.empty(len(Y2fs[2]))
+
+    for idx, _ in enumerate(n):
+        ndotp = np.dot(n[idx], p[idx])
+        bdotp = np.dot(b[idx], p[idx])
+        ndotq = np.dot(n[idx], q[idx])
+        bdotq = np.dot(b[idx], q[idx])
+        X20[idx] = X2fs[0][idx] * ndotp + Y2fs[0][idx] * bdotp
+        X2c[idx] = X2fs[1][idx] * ndotp + Y2fs[1][idx] * bdotp
+        X2s[idx] = X2fs[2][idx] * ndotp + Y2fs[2][idx] * bdotp
+
+        Y20[idx] = X2fs[0][idx] * ndotq + Y2fs[0][idx] * bdotq
+        Y2c[idx] = X2fs[1][idx] * ndotq + Y2fs[1][idx] * bdotq
+        Y2s[idx] = X2fs[2][idx] * ndotq + Y2fs[2][idx] * bdotq
+
+    return X20, Y20, X2c, Y2c, X2s, Y2s
+
 def get_kappa3(dpdphi, dqdphi, q, p, lp, tol=1e-10):
 
     k3_0 = np.empty(p[:,0].shape)

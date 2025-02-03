@@ -38,38 +38,37 @@ def r2calc(self):
     V2 = 2 * (X1s * X1c + Y1s * Y1c)
     V3 = X1c * X1c - X1s * X1s + Y1c * Y1c - Y1s * Y1s
 
-    factor = - B0_over_abs_G0 / 8;
-    Z20 = factor*np.matmul(d_d_varphi,V1)
-    Z2s = factor*(np.matmul(d_d_varphi,V2) - 2 * iota_N * V3)
-    Z2c = factor*(np.matmul(d_d_varphi,V3) + 2 * iota_N * V2)
+    Z20 = beta0 * Bbar / (2 * G0) * dldp - np.matmul(d_d_varphi,V1) / (8*dldp)
+    Z2s = -1/(dldp*8)*(np.matmul(d_d_varphi,V2) - 2 * iota_N * V3)
+    Z2c = -1/(dldp*8)*(np.matmul(d_d_varphi,V3) + 2 * iota_N * V2)
 
-    # Big issues start here. Have to work out the linear algebra to solve for X2 and Y2 terms since unlike in the original they both appear in A34-A36.
 
-    # Need to double check the math here
+    # Need to double check the math here, from eq 65
     beta_1s = -4 * spsi * sG * mu0 * p2 * B1c * abs_G0_over_B0 / (iota_N * B0 * B0)
     beta_1c = -4 * spsi * sG * mu0 * p2 * B1s * abs_G0_over_B0 / (iota_N * B0 * B0)
 
-    qs = np.matmul(d_d_varphi,X1s) - iota_N * X1c - Y1s * k3 * abs_G0_over_B0
-    qc = np.matmul(d_d_varphi,X1c) + iota_N * X1s - Y1c * k3 * abs_G0_over_B0
-    rs = np.matmul(d_d_varphi,Y1s) - iota_N * Y1c + X1s * k3 * abs_G0_over_B0
-    rc = np.matmul(d_d_varphi,Y1c) + iota_N * Y1s + X1c * k3 * abs_G0_over_B0
+    qs = np.matmul(d_d_varphi,X1s) - iota_N * X1c - Y1s * k3 * dldp
+    qc = np.matmul(d_d_varphi,X1c) + iota_N * X1s - Y1c * k3 * dldp
+    rs = np.matmul(d_d_varphi,Y1s) - iota_N * Y1c + X1s * k3 * dldp
+    rc = np.matmul(d_d_varphi,Y1c) + iota_N * Y1s + X1c * k3 * dldp
 
-    eqA32_inhomogeneous = -sG * Bbar / (2 * B0) * (X1s*k1 + Y1s*k2)
-    eqA33_inhomogeneous = -sG * Bbar / (2 * B0) * (X1c*k1 + Y1c*k2)
-    #eqA34_inhomogeneous = (1 / dldp) * (np.matmul(d_d_varphi, Z20) - (1 / dldp) * (abs_G0_over_B0*abs_G0_over_B0*))
+    eqA32_inhomogeneous = sG * Bbar / (2 * B0) * (X1s*k1 + Y1s*k2)
+    eqA33_inhomogeneous = sG * Bbar / (2 * B0) * (X1c*k1 + Y1c*k2)
+
     eqA35_inhomogeneous = (1 / dldp) * (np.matmul(d_d_varphi, Z2s) - 2 * iota_N * Z2c \
-                                        - (1 / dldp) * (-abs_G0_over_B0*abs_G0_over_B0*B2s/B0) + (3/2)*(abs_G0_over_B0*abs_G0_over_B0*B1c*B1s/(B0*B0) \
-                                        - (X1c*X1s*k1*k1 + X1c*Y1s*k1*k2 + X1s*Y1c*k1*k2+Y1c*Y1s*k2*k2)/4 * dldp*dldp - (qc*qs+rc*rs)/2))
+                                        - (1 / dldp) * (-abs_G0_over_B0*abs_G0_over_B0*B2s/B0 + (3/2)*(abs_G0_over_B0*abs_G0_over_B0*B1c*B1s/(B0*B0) \
+                                        - (X1c*X1s*k1*k1 + X1c*Y1s*k1*k2 + X1s*Y1c*k1*k2 + Y1c*Y1s*k2*k2)/4 * dldp*dldp - (qc*qs+rc*rs)/2)))
     eqA36_inhomogeneous = (1 / dldp) * (np.matmul(d_d_varphi, Z2c) - 2 * iota_N * Z2s \
-                                        - (1 / dldp) * (-abs_G0_over_B0*abs_G0_over_B0*B2c/B0) + (3/4)*(abs_G0_over_B0*abs_G0_over_B0*(B1c*B1c-B1s*B1s)/(B0*B0) \
-                                        - ((X1c*X1c - X1s * X1s)*k1*k1 + 2*(X1c*Y1c-X1s*Y1c)*k1*k2 + (Y1c*Y1c - Y1s*Y1s)*k2*k2)/4 * dldp*dldp - (qc*qc - qs*qs + rc*rc - rs*rs)/2))
+                                        - (1 / dldp) * (-abs_G0_over_B0*abs_G0_over_B0*B2c/B0 + (3/4)*(abs_G0_over_B0*abs_G0_over_B0*(B1c*B1c-B1s*B1s)/(B0*B0) \
+                                        - ((X1c*X1c - X1s * X1s)*k1*k1 + 2*(X1c*Y1c-X1s*Y1s)*k1*k2 + (Y1c*Y1c - Y1s*Y1s)*k2*k2)/4 * dldp*dldp - (qc*qc - qs*qs + rc*rc - rs*rs)/4)))
 
     fx0_inhomogeneous = -(I2/Bbar) * 0.5 * (k1*(X1c*Y1c+X1s*Y1s) + k2*(Y1c*Y1c+Y1s*Y1s)) * dldp - 0.5*beta0*k1*dldp*(X1s*Y1c - X1c*Y1s) - 0.5*dldp*(beta_1c*Y1s - beta_1s*Y1c) + k1*dldp*Z20
     fxs_inhomogeneous = -(I2/Bbar) * 0.5 * (k1*(X1s*Y1c+X1c*Y1s) + 2*k2*(Y1c*Y1s)) * dldp - 0.5*beta0*dldp*(k1*(X1c*Y1c - X1s*Y1s)-k2*(Y1s*Y1s-Y1c*Y1c)) - 0.5*dldp*(beta_1c*Y1s - beta_1s*Y1c) + k1*dldp*Z2s
-    fxc_inhomogeneous = -(I2/Bbar) * 0.5 * (k1*(X1c*Y1c-X1s*Y1s) + k2*(Y1c*Y1c-Y1s*Y1s)) * dldp - 0.5*beta0*dldp*(-k1*(X1c*Y1s + X1s*Y1c)+2*k2*(Y1s*Y1c)) - 0.5*dldp*(beta_1c*Y1s - beta_1s*Y1c) + k1*dldp*Z2c
+    fxc_inhomogeneous = -(I2/Bbar) * 0.5 * (k1*(X1c*Y1c-X1s*Y1s) + k2*(Y1c*Y1c-Y1s*Y1s)) * dldp - 0.5*beta0*dldp*(-k1*(X1c*Y1s + X1s*Y1c)-2*k2*(Y1s*Y1c)) - 0.5*dldp*(beta_1c*Y1s + beta_1s*Y1c) + k1*dldp*Z2c
+
     fy0_inhomogeneous =  (I2/Bbar) * 0.5 * (k1*(X1s*X1s+X1c*X1c) + k2*(X1c*Y1c + X1s*Y1s)) * dldp - 0.5*beta0*dldp*(k2*(X1s*Y1c-X1c*Y1s)) - 0.5*dldp*(beta_1s*X1c - beta_1c*X1s) + k2*dldp*Z20
-    fys_inhomogeneous =  (I2/Bbar) * 0.5 * (2*k1*(X1s*X1c) + k2*(X1s*Y1c + X1c*Y1s)) * dldp - 0.5*beta0*dldp*(k1*(X1s*X1s-X1c*X1c) - k2*(X1c*Y1c-X1s*Y1s)) - 0.5*dldp*(beta_1s*X1c - beta_1c*X1s) + k2*dldp*Z2s
-    fyc_inhomogeneous =  (I2/Bbar) * 0.5 * (k1*(X1c*X1c - X1s*X1s) + k2*(X1c*Y1c - X1s*Y1s)) * dldp - 0.5*beta0*dldp*(2*k1*(X1s*X1c) + k2*(X1c*Y1s+X1s*Y1c)) - 0.5*dldp*(beta_1s*X1c - beta_1c*X1s) + k2*dldp*Z2c
+    fys_inhomogeneous =  (I2/Bbar) * 0.5 * (2*k1*(X1s*X1c) + k2*(X1s*Y1c + X1c*Y1s)) * dldp - 0.5*beta0*dldp*(k1*(X1s*X1s-X1c*X1c) - k2*(X1c*Y1c-X1s*Y1s)) - 0.5*dldp*(beta_1c*X1c - beta_1s*X1s) + k2*dldp*Z2s
+    fyc_inhomogeneous =  (I2/Bbar) * 0.5 * (k1*(X1c*X1c - X1s*X1s) + k2*(X1c*Y1c - X1s*Y1s)) * dldp - 0.5*beta0*dldp*(2*k1*(X1s*X1c) + k2*(X1c*Y1s+X1s*Y1c)) + 0.5*dldp*(beta_1s*X1c + beta_1c*X1s) + k2*dldp*Z2c
     
     eqA41_inhomogeneous = -X1s*fx0_inhomogeneous + X1c*fxs_inhomogeneous - X1s*fxc_inhomogeneous - Y1s*fy0_inhomogeneous + Y1c*fys_inhomogeneous - Y1s*fyc_inhomogeneous
     eqA42_inhomogeneous = -X1c*fx0_inhomogeneous + X1s*fxs_inhomogeneous + X1c*fxc_inhomogeneous - Y1c*fy0_inhomogeneous + Y1s*fys_inhomogeneous + Y1c*fyc_inhomogeneous
@@ -88,37 +87,37 @@ def r2calc(self):
     eqA33_Y2s = X1c
     eqA33_Y2c = -X1s
 
-    eqA35_X20 = 0
-    eqA35_X2s = k1
-    eqA35_X2c = 0
-    eqA35_Y20 = 0
-    eqA35_Y2s = k2
-    eqA35_Y2c = 0
+    eqA35_X20 = np.zeros(nphi)
+    eqA35_X2s = -k1
+    eqA35_X2c = np.zeros(nphi)
+    eqA35_Y20 = np.zeros(nphi)
+    eqA35_Y2s = -k2
+    eqA35_Y2c = np.zeros(nphi)
 
-    eqA36_X20 = 0
-    eqA36_X2s = 0
-    eqA36_X2c = k1
-    eqA36_Y20 = 0
-    eqA36_Y2s = 0
-    eqA36_Y2c = k2
+    eqA36_X20 = np.zeros(nphi)
+    eqA36_X2s = np.zeros(nphi)
+    eqA36_X2c = -k1
+    eqA36_Y20 = np.zeros(nphi)
+    eqA36_Y2s = np.zeros(nphi)
+    eqA36_Y2c = -k2
 
-    fx0_X20 = d_d_varphi
-    fx0_X2s = 0
-    fx0_X2c = 0
+    fx0_X20 = np.zeros(nphi)
+    fx0_X2s = np.zeros(nphi)
+    fx0_X2c = np.zeros(nphi)
     fx0_Y20 = -k3*dldp + 2*I2*dldp/Bbar
-    fx0_Y2s = -4*G0*Z2c/Bbar
-    fx0_Y2c =  4*G0*Z2s/Bbar
+    fx0_Y2s =  4*G0*Z2c/Bbar
+    fx0_Y2c = -4*G0*Z2s/Bbar
 
-    fxs_X20 = 0
-    fxs_X2s = d_d_varphi
+    fxs_X20 = np.zeros(nphi)
+    fxs_X2s = np.zeros(nphi)
     fxs_X2c = -2*iota_N
     fxs_Y20 = 4*G0*Z2c/Bbar
     fxs_Y2s = -k3*dldp + 2*I2*dldp/Bbar
     fxs_Y2c = -4*G0*Z20/Bbar
 
-    fxc_X20 = 0
+    fxc_X20 = np.zeros(nphi)
     fxc_X2s = 2*iota_N
-    fxc_X2c = d_d_varphi
+    fxc_X2c = np.zeros(nphi)
     fxc_Y20 = -4*G0*Z2s/Bbar
     fxc_Y2s = 4*G0*Z20/Bbar
     fxc_Y2c = -k3*dldp + 2*I2*dldp/Bbar
@@ -126,30 +125,30 @@ def r2calc(self):
     fy0_X20 = k3*dldp - 2*I2*dldp/Bbar
     fy0_X2s = -4*G0*Z2c/Bbar
     fy0_X2c = 4*G0*Z2s/Bbar
-    fy0_Y20 = d_d_varphi
-    fy0_Y2s = 0
-    fy0_Y2c = 0
+    fy0_Y20 = np.zeros(nphi)
+    fy0_Y2s = np.zeros(nphi)
+    fy0_Y2c = np.zeros(nphi)
     
     fys_X20 = -4*G0*Z2c/Bbar
     fys_X2s = k3*dldp - 2*I2*dldp/Bbar
     fys_X2c = 4*G0*Z20/Bbar
-    fys_Y20 = 0
-    fys_Y2s = d_d_varphi
+    fys_Y20 = np.zeros(nphi)
+    fys_Y2s = np.zeros(nphi)
     fys_Y2c = -2*iota_N
 
     fyc_X20 = 4*G0*Z2s/Bbar
     fyc_X2s = -4*G0*Z20/Bbar
     fyc_X2c = k3*dldp - 2*I2*dldp/Bbar
-    fyc_Y20 = 0
+    fyc_Y20 = np.zeros(nphi)
     fyc_Y2s = 2*iota_N
-    fyc_Y2c = d_d_varphi
+    fyc_Y2c = np.zeros(nphi)
 
     eqA41_X20 = -X1s*fx0_X20 + X1c*fxs_X20 - X1s*fxc_X20 - Y1s*fy0_X20 + Y1c*fys_X20 - Y1s*fyc_X20
     eqA41_X2s = -X1s*fx0_X2s + X1c*fxs_X2s - X1s*fxc_X2s - Y1s*fy0_X2s + Y1c*fys_X2s - Y1s*fyc_X2s
-    eqA41_X2c = -X1s*fx0_X2c + X1c*fxs_X2c - X1s*fxc_X2c - Y1s*fy0_X2c + Y1c*fys_X2c - Y1s*fyc_X2c
-    eqA41_Y20 = -X1s*fx0_Y20 + X1c*fxs_Y20 - X1s*fxc_Y20 - Y1s*fy0_Y20 + Y1c*fys_Y20 - Y1s*fyc_Y20
-    eqA41_Y2s = -X1s*fx0_Y2s + X1c*fxs_Y2s - X1s*fxc_Y2s - Y1s*fy0_Y2s + Y1c*fys_Y2s - Y1s*fyc_Y2s
-    eqA41_Y2c = -X1s*fx0_Y2c + X1c*fxs_Y2c - X1s*fxc_Y2c - Y1s*fy0_Y2c + Y1c*fys_Y2c - Y1s*fyc_Y2c
+    eqA41_X2c = -X1s*fx0_X2c + X1c*fxs_X2c - X1s*fxc_X2c - Y1s*fy0_X2c + Y1c*fyc_X2c - Y1s*fyc_X2c
+    eqA41_Y20 = -X1s*fx0_Y20 + X1c*fxs_Y20 - X1s*fxc_Y20 - Y1s*fy0_Y20 + Y1c*fyc_Y20 - Y1s*fyc_Y20
+    eqA41_Y2s = -X1s*fx0_Y2s + X1c*fxs_Y2s - X1s*fxc_Y2s - Y1s*fy0_Y2s + Y1c*fyc_Y2s - Y1s*fyc_Y2s
+    eqA41_Y2c = -X1s*fx0_Y2c + X1c*fxs_Y2c - X1s*fxc_Y2c - Y1s*fy0_Y2c + Y1c*fyc_Y2c - Y1s*fys_Y2c
 
     eqA42_X20 = -X1c*fx0_X20 + X1s*fxs_X20 + X1c*fxc_X20 - Y1c*fy0_X20 + Y1s*fys_X20 + Y1c*fyc_X20
     eqA42_X2s = -X1c*fx0_X2s + X1s*fxs_X2s + X1c*fxc_X2s - Y1c*fy0_X2s + Y1s*fys_X2s + Y1c*fyc_X2s
@@ -158,70 +157,170 @@ def r2calc(self):
     eqA42_Y2s = -X1c*fx0_Y2s + X1s*fxs_Y2s + X1c*fxc_Y2s - Y1c*fy0_Y2s + Y1s*fys_Y2s + Y1c*fyc_Y2s
     eqA42_Y2c = -X1c*fx0_Y2c + X1s*fxs_Y2c + X1c*fxc_Y2c - Y1c*fy0_Y2c + Y1s*fys_Y2c + Y1c*fyc_Y2c
 
-    matrix = np.zeros((6 * nphi, 6 * nphi))
-    right_hand_side = np.zeros(6 * nphi)
+    matrix = np.zeros((6*nphi, 6*nphi))
+    right_hand_side = np.zeros((6*nphi))
     for j in range(nphi):
+
+        # Derivative terms
         #X20 terms
-        matrix[j,               0:nphi      ] = eqA32_X20
-        matrix[j+nphi,          0:nphi      ] = eqA33_X20
-        matrix[j+2*nphi,        0:nphi      ] = eqA35_X20
-        matrix[j+3*nphi,        0:nphi      ] = eqA36_X20 
-        matrix[j+4*nphi,        0:nphi      ] = eqA41_X20
-        matrix[j+5*nphi,        0:nphi      ] = eqA42_X20
+        matrix[j+4*nphi, 0*nphi:1*nphi] = -X1s[j] * d_d_varphi[j, :] #A41
+        matrix[j+5*nphi, 0*nphi:1*nphi] = -X1c[j] * d_d_varphi[j, :] #A42
         #X2c terms
-        matrix[j,               nphi:2*nphi ] = eqA32_X2c
-        matrix[j+nphi,          nphi:2*nphi ] = eqA33_X2c 
-        matrix[j+2*nphi,        nphi:2*nphi ] = eqA35_X2c
-        matrix[j+3*nphi,        nphi:2*nphi ] = eqA36_X2c 
-        matrix[j+4*nphi,        nphi:2*nphi ] = eqA41_X2c
-        matrix[j+5*nphi,        nphi:2*nphi ] = eqA42_X2c
+        matrix[j+4*nphi, 1*nphi:2*nphi] = -X1s[j] * d_d_varphi[j, :]
+        matrix[j+5*nphi, 1*nphi:2*nphi] =  X1c[j] * d_d_varphi[j, :]
         #X2s terms
-        matrix[j,               2*nphi:3*nphi] = eqA32_X2s
-        matrix[j+nphi,          2*nphi:3*nphi] = eqA33_X2s 
-        matrix[j+2*nphi,        2*nphi:3*nphi] = eqA35_X2s
-        matrix[j+3*nphi,        2*nphi:3*nphi] = eqA36_X2s 
-        matrix[j+4*nphi,        2*nphi:3*nphi] = eqA41_X2s
-        matrix[j+5*nphi,        2*nphi:3*nphi] = eqA42_X2s
+        matrix[j+4*nphi, 2*nphi:3*nphi] =  X1c[j] * d_d_varphi[j, :]
+        matrix[j+5*nphi, 2*nphi:3*nphi] =  X1s[j] * d_d_varphi[j, :]
         #Y20 terms
-        matrix[j,               3*nphi:4*nphi] = eqA32_Y20
-        matrix[j+nphi,          3*nphi:4*nphi] = eqA33_Y20
-        matrix[j+2*nphi,        3*nphi:4*nphi] = eqA35_Y20
-        matrix[j+3*nphi,        3*nphi:4*nphi] = eqA36_Y20
-        matrix[j+4*nphi,        3*nphi:4*nphi] = eqA41_Y20
-        matrix[j+5*nphi,        3*nphi:4*nphi] = eqA42_Y20
+        matrix[j+4*nphi, 3*nphi:4*nphi] = -Y1s[j] * d_d_varphi[j, :]
+        matrix[j+5*nphi, 3*nphi:4*nphi] = -Y1c[j] * d_d_varphi[j, :]
         #Y2c terms
-        matrix[j,               4*nphi:5*nphi] = eqA32_Y2c
-        matrix[j+nphi,          4*nphi:5*nphi] = eqA33_Y2c
-        matrix[j+2*nphi,        4*nphi:5*nphi] = eqA35_Y2c
-        matrix[j+3*nphi,        4*nphi:5*nphi] = eqA36_Y2c
-        matrix[j+4*nphi,        4*nphi:5*nphi] = eqA41_Y2c
-        matrix[j+5*nphi,        4*nphi:5*nphi] = eqA42_Y2c
+        matrix[j+4*nphi, 4*nphi:5*nphi] = -Y1s[j] * d_d_varphi[j, :]
+        matrix[j+5*nphi, 4*nphi:5*nphi] =  Y1c[j] * d_d_varphi[j, :]
         #Y2s terms
-        matrix[j,               5*nphi:6*nphi] = eqA32_Y2s
-        matrix[j+nphi,          5*nphi:6*nphi] = eqA33_Y2s
-        matrix[j+2*nphi,        5*nphi:6*nphi] = eqA35_Y2s
-        matrix[j+3*nphi,        5*nphi:6*nphi] = eqA36_Y2s
-        matrix[j+4*nphi,        5*nphi:6*nphi] = eqA41_Y2s
-        matrix[j+5*nphi,        5*nphi:6*nphi] = eqA42_Y2s
+        matrix[j+4*nphi, 5*nphi:6*nphi] =  Y1c[j] * d_d_varphi[j, :]
+        matrix[j+5*nphi, 5*nphi:6*nphi] =  Y1s[j] * d_d_varphi[j, :]
+
+        #Non derivatives
+
+        #X20 terms
+        matrix[j+0*nphi, j+0*nphi] = matrix[j+0*nphi, j+0*nphi] + eqA32_X20[j] #A32
+        matrix[j+1*nphi, j+0*nphi] = matrix[j+1*nphi, j+0*nphi] + eqA33_X20[j] #A33
+        matrix[j+2*nphi, j+0*nphi] = matrix[j+2*nphi, j+0*nphi] + eqA35_X20[j] #A35
+        matrix[j+3*nphi, j+0*nphi] = matrix[j+3*nphi, j+0*nphi] + eqA36_X20[j] #A36
+        matrix[j+4*nphi, j+0*nphi] = matrix[j+4*nphi, j+0*nphi] + eqA41_X20[j] #A41
+        matrix[j+5*nphi, j+0*nphi] = matrix[j+5*nphi, j+0*nphi] + eqA42_X20[j] #A42
+        #X2c terms
+        matrix[j+0*nphi, j+1*nphi] = matrix[j+0*nphi, j+1*nphi] + eqA32_X2c[j]
+        matrix[j+1*nphi, j+1*nphi] = matrix[j+1*nphi, j+1*nphi] + eqA33_X2c[j]
+        matrix[j+2*nphi, j+1*nphi] = matrix[j+2*nphi, j+1*nphi] + eqA35_X2c[j]
+        matrix[j+3*nphi, j+1*nphi] = matrix[j+3*nphi, j+1*nphi] + eqA36_X2c[j]
+        matrix[j+4*nphi, j+1*nphi] = matrix[j+4*nphi, j+1*nphi] + eqA41_X2c[j]
+        matrix[j+5*nphi, j+1*nphi] = matrix[j+5*nphi, j+1*nphi] + eqA42_X2c[j]
+        #X2s terms
+        matrix[j+0*nphi, j+2*nphi] = matrix[j+0*nphi, j+2*nphi] + eqA32_X2s[j]
+        matrix[j+1*nphi, j+2*nphi] = matrix[j+1*nphi, j+2*nphi] + eqA33_X2s[j]
+        matrix[j+2*nphi, j+2*nphi] = matrix[j+2*nphi, j+2*nphi] + eqA35_X2s[j]
+        matrix[j+3*nphi, j+2*nphi] = matrix[j+3*nphi, j+2*nphi] + eqA36_X2s[j]
+        matrix[j+4*nphi, j+2*nphi] = matrix[j+4*nphi, j+2*nphi] + eqA41_X2s[j]
+        matrix[j+5*nphi, j+2*nphi] = matrix[j+5*nphi, j+2*nphi] + eqA42_X2s[j]
+        #Y20 terms
+        matrix[j+0*nphi, j+3*nphi] = matrix[j+0*nphi, j+3*nphi] + eqA32_Y20[j]
+        matrix[j+1*nphi, j+3*nphi] = matrix[j+1*nphi, j+3*nphi] + eqA33_Y20[j]
+        matrix[j+2*nphi, j+3*nphi] = matrix[j+2*nphi, j+3*nphi] + eqA35_Y20[j]
+        matrix[j+3*nphi, j+3*nphi] = matrix[j+3*nphi, j+3*nphi] + eqA36_Y20[j]
+        matrix[j+4*nphi, j+3*nphi] = matrix[j+4*nphi, j+3*nphi] + eqA41_Y20[j]
+        matrix[j+5*nphi, j+3*nphi] = matrix[j+5*nphi, j+3*nphi] + eqA42_Y20[j]
+        #Y2c terms
+        matrix[j+0*nphi, j+4*nphi] = matrix[j+0*nphi, j+4*nphi] + eqA32_Y2c[j]
+        matrix[j+1*nphi, j+4*nphi] = matrix[j+1*nphi, j+4*nphi] + eqA33_Y2c[j]
+        matrix[j+2*nphi, j+4*nphi] = matrix[j+2*nphi, j+4*nphi] + eqA35_Y2c[j]
+        matrix[j+3*nphi, j+4*nphi] = matrix[j+3*nphi, j+4*nphi] + eqA36_Y2c[j]
+        matrix[j+4*nphi, j+4*nphi] = matrix[j+4*nphi, j+4*nphi] + eqA41_Y2c[j]
+        matrix[j+5*nphi, j+4*nphi] = matrix[j+5*nphi, j+4*nphi] + eqA42_Y2c[j]
+        #Y2s terms
+        matrix[j+0*nphi, j+5*nphi] = matrix[j+0*nphi, j+5*nphi] + eqA32_Y2s[j]
+        matrix[j+1*nphi, j+5*nphi] = matrix[j+1*nphi, j+5*nphi] + eqA33_Y2s[j]
+        matrix[j+2*nphi, j+5*nphi] = matrix[j+2*nphi, j+5*nphi] + eqA35_Y2s[j]
+        matrix[j+3*nphi, j+5*nphi] = matrix[j+3*nphi, j+5*nphi] + eqA36_Y2s[j]
+        matrix[j+4*nphi, j+5*nphi] = matrix[j+4*nphi, j+5*nphi] + eqA41_Y2s[j]
+        matrix[j+5*nphi, j+5*nphi] = matrix[j+5*nphi, j+5*nphi] + eqA42_Y2s[j]
 
 
     #Inhomogeneous
-    right_hand_side[0:nphi               ] = -(eqA32_inhomogeneous)
-    right_hand_side[nphi:2*nphi          ] = -(eqA33_inhomogeneous)
-    right_hand_side[2*nphi:3*nphi        ] = -(eqA35_inhomogeneous)
-    right_hand_side[3*nphi:4*nphi        ] = -(eqA36_inhomogeneous)
-    right_hand_side[4*nphi:5*nphi        ] = -(eqA41_inhomogeneous)
-    right_hand_side[5*nphi:6*nphi        ] = -(eqA42_inhomogeneous)
+    right_hand_side[0*nphi:1*nphi] = -(eqA32_inhomogeneous)
+    right_hand_side[1*nphi:2*nphi] = -(eqA33_inhomogeneous)
+    right_hand_side[2*nphi:3*nphi] = -(eqA35_inhomogeneous)
+    right_hand_side[3*nphi:4*nphi] = -(eqA36_inhomogeneous)
+    right_hand_side[4*nphi:5*nphi] = -(eqA41_inhomogeneous)
+    right_hand_side[5*nphi:6*nphi] = -(eqA42_inhomogeneous)
+
     
     solution = np.linalg.solve(matrix, right_hand_side)
 
-    X20 = solution[0:nphi]
-    X2c = solution[nphi:2*nphi]
+
+    X20 = solution[0*nphi:1*nphi]
+    X2c = solution[1*nphi:2*nphi]
     X2s = solution[2*nphi:3*nphi]
     Y20 = solution[3*nphi:4*nphi]
     Y2c = solution[4*nphi:5*nphi]
     Y2s = solution[5*nphi:6*nphi]
 
-    # Check to make sure the equations actually sum to 0
+    A41derivterms = -X1s * np.matmul(d_d_varphi,X20) - X1s * np.matmul(d_d_varphi, X2c) + X1c * np.matmul(d_d_varphi, X2s) - Y1s * np.matmul(d_d_varphi, Y20) - Y1s * np.matmul(d_d_varphi, Y2c) + Y1c * np.matmul(d_d_varphi, Y2s)
+    A42derivterms = -X1c * np.matmul(d_d_varphi,X20) + X1c * np.matmul(d_d_varphi, X2c) + X1s * np.matmul(d_d_varphi, X2s) - Y1c * np.matmul(d_d_varphi, Y20) + Y1c * np.matmul(d_d_varphi, Y2c) + Y1s * np.matmul(d_d_varphi, Y2s)
 
-    #B20 = 
+
+
+    eqA32is0 = eqA32_inhomogeneous + eqA32_X20 * X20 + eqA32_X2c * X2c + eqA32_X2s * X2s + eqA32_Y20 * Y20 + eqA32_Y2c * Y2c + eqA32_Y2s * Y2s
+    eqA33is0 = eqA33_inhomogeneous + eqA33_X20 * X20 + eqA33_X2c * X2c + eqA33_X2s * X2s + eqA33_Y20 * Y20 + eqA33_Y2c * Y2c + eqA33_Y2s * Y2s
+    eqA35is0 = eqA35_inhomogeneous + eqA35_X20 * X20 + eqA35_X2c * X2c + eqA35_X2s * X2s + eqA35_Y20 * Y20 + eqA35_Y2c * Y2c + eqA35_Y2s * Y2s
+    eqA36is0 = eqA36_inhomogeneous + eqA36_X20 * X20 + eqA36_X2c * X2c + eqA36_X2s * X2s + eqA36_Y20 * Y20 + eqA36_Y2c * Y2c + eqA36_Y2s * Y2s
+    eqA41is0 = eqA41_inhomogeneous + eqA41_X20 * X20 + eqA41_X2c * X2c + eqA41_X2s * X2s + eqA41_Y20 * Y20 + eqA41_Y2c * Y2c + eqA41_Y2s * Y2s + A41derivterms
+    eqA42is0 = eqA42_inhomogeneous + eqA42_X20 * X20 + eqA42_X2c * X2c + eqA42_X2s * X2s + eqA42_Y20 * Y20 + eqA42_Y2c * Y2c + eqA42_Y2s * Y2s + A42derivterms
+
+    np.testing.assert_allclose(np.sum(eqA32is0), 0, atol=1E-10)
+    np.testing.assert_allclose(np.sum(eqA33is0), 0, atol=1E-10)
+    np.testing.assert_allclose(np.sum(eqA35is0), 0, atol=1E-10)
+    np.testing.assert_allclose(np.sum(eqA36is0), 0, atol=1E-10)
+    np.testing.assert_allclose(np.sum(eqA41is0), 0, atol=1E-10)
+    np.testing.assert_allclose(np.sum(eqA42is0), 0, atol=1E-10)
+
+    G2 = -mu0 * p2 * G0 / (B0 * B0) - iota * I2
+
+
+    B20 = -(B0*B0*B0 / (G0*G0)) * (dldp * ((X20 * k1 + Y20 * k2) * dldp - np.matmul(d_d_varphi, Z20)) \
+          - (3*G0*G0*(B1c*B1c+B1s*B1s)/(4*B0*B0*B0*B0)) - (G0*(G2 + iota * I2))/(B0*B0) \
+          + dldp * dldp * ((X1c * k1 + Y1c * k2)*(X1c * k1 + Y1c * k2) + (X1s * k1 + Y1s * k2)*(X1s * k1 + Y1s * k2)) / 4 \
+          + (qc * qc + qs * qs + rc * rc + rs * rs)/4)
+    
+          
+
+    d_l_d_phi = self.d_l_d_phi
+    normalizer = 1 / np.sum(d_l_d_phi)
+    self.B20_mean = np.sum(B20 * d_l_d_phi) * normalizer
+    self.B20_anomaly = B20 - self.B20_mean
+    self.B20_residual = np.sqrt(np.sum((B20 - self.B20_mean) * (B20 - self.B20_mean) * d_l_d_phi) * normalizer) / B0
+    self.B20_variation = np.max(B20) - np.min(B20)
+
+    self.N_helicity = - self.helicity * self.nfp
+    self.G2 = G2
+
+    self.d_k1_d_varphi = np.matmul(d_d_varphi, k1)
+    self.d_k2_d_varphi = np.matmul(d_d_varphi, k2)
+    self.d_k3_d_varphi = np.matmul(d_d_varphi, k3)
+    self.d_X20_d_varphi = np.matmul(d_d_varphi, X20)
+    self.d_X2s_d_varphi = np.matmul(d_d_varphi, X2s)
+    self.d_X2c_d_varphi = np.matmul(d_d_varphi, X2c)
+    self.d_Y20_d_varphi = np.matmul(d_d_varphi, Y20)
+    self.d_Y2s_d_varphi = np.matmul(d_d_varphi, Y2s)
+    self.d_Y2c_d_varphi = np.matmul(d_d_varphi, Y2c)
+    self.d_Z20_d_varphi = np.matmul(d_d_varphi, Z20)
+    self.d_Z2s_d_varphi = np.matmul(d_d_varphi, Z2s)
+    self.d_Z2c_d_varphi = np.matmul(d_d_varphi, Z2c)
+    self.d2_X1c_d_varphi2 = np.matmul(d_d_varphi, self.d_X1c_d_varphi)
+    self.d2_Y1c_d_varphi2 = np.matmul(d_d_varphi, self.d_Y1c_d_varphi)
+    self.d2_Y1s_d_varphi2 = np.matmul(d_d_varphi, self.d_Y1s_d_varphi)
+
+    # Store all important results in self:
+    self.V1 = V1
+    self.V2 = V2
+    self.V3 = V3
+
+    self.X20 = X20
+    self.X2s = X2s
+    self.X2c = X2c
+    self.Y20 = Y20
+    self.Y2s = Y2s
+    self.Y2c = Y2c
+    self.Z20 = Z20
+    self.Z2s = Z2s
+    self.Z2c = Z2c
+    self.beta_1s = beta_1s
+    self.B20 = B20
+
+    # O(r^2) diagnostics:
+    #self.mercier()
+    #self.calculate_grad_grad_B_tensor()
+    #self.grad_grad_B_inverse_scale_length_vs_varphi = t.grad_grad_B_inverse_scale_length_vs_varphi
+    #self.grad_grad_B_inverse_scale_length = t.grad_grad_B_inverse_scale_length
+    #self.calculate_r_singularity()

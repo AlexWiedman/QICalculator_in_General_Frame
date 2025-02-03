@@ -4,6 +4,7 @@ class QIC():
 
     from QIC.r1calcLambda import _residual, _jacobian, solve_sigma_equation, \
         _determine_helicity, r1_diagnostics
+    from .r2calc import r2calc
     from QIC.init_axis import init_axis, convert_to_spline
     from QIC.grad_B_tensor import calculate_grad_B_tensor
     from QIC.util import B_mag
@@ -11,7 +12,7 @@ class QIC():
     from QIC.curve_frame_to_cylindrical import curvilinear_frame_to_cylindrical
 
     def __init__(self, rc, zs, rs = None, zc = None, nfp = 1, X1c = None, Y1c = None, sigma0 = 0., B0 = None, I2 = 0
-                 , sG = 1, spsi = 1, nphi = 61, B2s=0., B2c=0., p2=0., order="r1"):
+                 , sG = 1, spsi = 1, nphi = 61, B2s=None, B2c=None, p2=0., order="r1"):
         
         if rs == None and zc == None:
             nfourier = np.max([len(rc), len(zs)])
@@ -50,6 +51,10 @@ class QIC():
             Y1c = np.ones(nphi)
         if B0 is None:
             B0 = np.ones(nphi)
+        if B2s is None:
+            B2s = np.zeros(nphi)
+        if B2c is None:
+            B2c = np.zeros(nphi)
         
         self.nfp = nfp
         self.sigma0 = sigma0
@@ -79,7 +84,7 @@ class QIC():
         self.solve_sigma_equation()
         self.r1_diagnostics()
         if self.order != 'r1':
-            self.calculate_r2()
+            self.r2calc()
             if self.order == 'r3':
                 self.calculate_r3()
         self.calculate_grad_B_tensor()
