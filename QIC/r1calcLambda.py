@@ -125,4 +125,8 @@ def r1_diagnostics(self):
     self.d_X1s_d_varphi = np.matmul(self.d_d_varphi, self.X1s)
     self.d_Y1s_d_varphi = np.matmul(self.d_d_varphi, self.Y1s)
     self.d_Y1c_d_varphi = np.matmul(self.d_d_varphi, self.Y1c)
+    self.d_B1c_d_varphi = np.matmul(self.d_d_varphi, self.B1c)
+    self.d_B1s_d_varphi = np.matmul(self.d_d_varphi, self.B1s)
+
+    self.d_2_B0_d_varphi_2 = np.matmul(self.d_d_varphi, np.matmul(self.d_d_varphi, self.B0))
 
