@@ -12,7 +12,7 @@ class QIC():
     from QIC.curve_frame_to_cylindrical import curvilinear_frame_to_cylindrical
 
     def __init__(self, rc, zs, rs = None, zc = None, nfp = 1, X1c = None, Y1c = None, sigma0 = 0., B0 = None, I2 = 0
-                 , sG = 1, spsi = 1, nphi = 61, B2s=None, B2c=None, p2=0., order="r1"):
+                 , sG = 1, spsi = 1, nphi = 61, B2s=None, B2c=None, p2=0., order="r1", frame="centroid"):
         
         if rs == None and zc == None:
             nfourier = np.max([len(rc), len(zs)])
@@ -30,6 +30,7 @@ class QIC():
         self.zc = np.zeros(nfourier)
         self.rc[:len(rc)] = rc
         self.zs[:len(zs)] = zs
+        self.frame = frame
 
         if rs != None:
             self.rs[:len(rs)] = rs
