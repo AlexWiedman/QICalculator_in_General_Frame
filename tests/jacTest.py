@@ -1,4 +1,4 @@
-from QIC.r1calc import _residual, _jacobian
+from QIC.r1calcFS import _residual, _jacobian
 from QIC.qic import QIC
 import numpy as np
 

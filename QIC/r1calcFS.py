@@ -5,21 +5,19 @@ from newtonMethod import newton
 
 def _residual(self, x):
     """
-    Calculate the residual of the sigma equation
+    Residual in the sigma equation, used for Newton's method.  x is
+    the state vector, corresponding to sigma on the phi grid,
+    except that the first element of x is actually iota.
     """
     sigma = np.copy(x)
     sigma[0] = self.sigma0
     iota = x[0]
-
-    L2 = self.X1c**2 + self.Y1c**2
-    beta = - self.Bbar / (self.B0 * L2)
-    X1cP = np.matmul(self.d_d_varphi, self.X1c)
-    Y1cP = np.matmul(self.d_d_varphi, self.Y1c)
-
+    #Change to proper format
     r = np.matmul(self.d_d_varphi, sigma) \
-        - sigma * (2 * (self.X1c * X1cP + self.Y1c * Y1cP)) / L2 \
-        - beta * iota * (sigma * sigma + 1 + self.B0 * self.B0 * L2 / (self.Bbar * self.Bbar))  \
-        + 2 * (self.Y1c * X1cP - self.X1c * Y1cP) / L2 + 2 * self.G0 / self.B0 * (self.I2 / self.Bbar - self.k3)
+        + (iota + self.helicity * self.nfp) * \
+        (self.etabar_squared_over_curvature_squared * self.etabar_squared_over_curvature_squared + 1 + sigma * sigma) \
+        - 2 * self.etabar_squared_over_curvature_squared * (-self.spsi * self.torsion + self.I2 / self.B0) * self.G0 / self.B0
+    #logger.debug("_residual called with x={}, r={}".format(x, r))
     return r
 
 def _jacobian(self, x):

@@ -1,5 +1,3 @@
-
-
 import numpy as np
 from scipy.interpolate import CubicSpline as spline
 from QIC.spectral_diff_matrix import spectral_diff_matrix
@@ -52,24 +50,31 @@ def init_axis(self):
     d3_r_d_phi3_cylindrical = np.array([R0ppp - 3 * R0p, 3 * R0pp - R0, Z0ppp]).transpose()
         
 
+    
+
+   
     # Calculates position in cartesian coordinates
     r, rp, rpp, rppp = get_r_vector(R0, R0p, R0pp, R0ppp, Z0, Z0p, Z0pp, Z0ppp, nphi, nfp)
-
     # Calculates necessary diagnostics for the centroid frame from the Frenet-Serret frame
     tangent, normal, binormal, curvature, torsion = get_FS_frame(rp, rpp, rppp)
-    dtdp = np.empty(tangent.shape)
-    dldp = np.linalg.norm(rp, axis=1)
-    for idx, m in enumerate(normal):
-        dtdp[idx] = dldp[idx] * curvature[idx] * normal[idx]
-    c = centroid(r, rp)
-    p, q, dpdphi, dqdphi = get_Centroid_frame(c, r, tangent, rp, dtdp)
-    #dldp = np.linalg.norm(rp, axis=1)
-    #p = normal
-    #q = binormal
-    #dpdphi = dldp[:, None] * (-curvature[:, None] * tangent + torsion[:, None] * binormal)
-    #dqdphi = dldp[:, None] * (-torsion[:, None] * normal)
-    k1, k2 = get_kappa1_kappa2(p, q, normal, curvature)
-    k3 = get_kappa3(dpdphi, dqdphi, q, p, dldp)
+
+    if self.frame == "centroid":
+        dtdp = np.empty(tangent.shape)
+        dldp = np.linalg.norm(rp, axis=1)
+        for idx, m in enumerate(normal):
+            dtdp[idx] = dldp[idx] * curvature[idx] * normal[idx]
+        c = centroid(r, rp)
+        p, q, dpdphi, dqdphi = get_Centroid_frame(c, r, tangent, rp, dtdp)
+
+        k1, k2 = get_kappa1_kappa2(p, q, normal, curvature)
+        k3 = get_kappa3(dpdphi, dqdphi, q, p, dldp)
+    elif self.frame == "FS":
+        k1 = curvature
+        k2 = np.zeros(k1.shape)
+        k3 = torsion
+        p = normal
+        q = binormal
+
 
     
     self.normal_cartesian = normal
