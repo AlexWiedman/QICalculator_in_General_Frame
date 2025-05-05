@@ -85,6 +85,7 @@ def B_mag(self, r, theta, phi, Boozer_toroidal = False):
     B1 = self.B1c * np.cos(thetaN) + self.B1s * np.sin(thetaN)
 
     B = self.B0 + r * B1
+    #use scipy interpolation to extend B to nfp periods for nphi points
 
     # Add O(r^2) terms if necessary:
     if self.order != 'r1':
@@ -96,8 +97,15 @@ def B_mag(self, r, theta, phi, Boozer_toroidal = False):
                                      bc_type='periodic')
 
         B += (r**2) * (self.B20_spline(phi) + self.B2c * np.cos(2 * thetaN) + self.B2s * np.sin(2 * thetaN))
+    
+    phi_1d = np.linspace(0, 2*np.pi, self.nphi)
+    phi_rollover = np.linspace(0, 2*np.pi, self.nphi+1)
+    B_rollover = np.concatenate((B, np.atleast_2d(B[:, 0]).T), axis=1)
+    B_spline = spline((phi_rollover/self.nfp), B_rollover, axis=1, bc_type='periodic')
+    B_full = B_spline(phi_1d)
 
-    return B
+
+    return B_full
 
 def cylindrical_to_centroid(R, Z, nphi, nfp):
     # Function which calculates centroid frame from axis in cylindrical coordinates

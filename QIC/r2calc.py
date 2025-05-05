@@ -1,6 +1,10 @@
 import numpy as np
 from .util import mu0
 
+"""
+Order 2 is currently not behaving correctly
+"""
+
 def r2calc(self):
 
     #shorthand terms
