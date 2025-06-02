@@ -35,7 +35,9 @@ def r2calc(self):
     I2_over_B0 = self.I2 / self.B0
     Bbar = self.Bbar
     dldp = self.d_l_d_varphi
-    #beta0 is omitted, for what reason?
+
+    #Should the antiderivative of beta0 be found with splines and scipy?
+    d_beta0_d_varphi = 2*mu0*p2*G0/Bbar * (1 / (B0 * B0) - 1 / (2*np.pi) * (1 / np.sum(B0 * B0)))
     beta0=0
 
     V1 = X1c * X1c + X1s * X1s + Y1c * Y1c + Y1s * Y1s
@@ -56,18 +58,18 @@ def r2calc(self):
     rs = np.matmul(d_d_varphi,Y1s) - iota_N * Y1c + X1s * k3 * dldp
     rc = np.matmul(d_d_varphi,Y1c) + iota_N * Y1s + X1c * k3 * dldp
 
-    eqA32_inhomogeneous = sG * Bbar / (2 * B0) * (X1s*k1 + Y1s*k2)
-    eqA33_inhomogeneous = sG * Bbar / (2 * B0) * (X1c*k1 + Y1c*k2)
+    eqA32_inhomogeneous = (sG * Bbar / (2 * B0)) * (X1s*k1 + Y1s*k2)
+    eqA33_inhomogeneous = (sG * Bbar / (2 * B0)) * (X1c*k1 + Y1c*k2)
 
     eqA35_inhomogeneous = (1 / dldp) * (np.matmul(d_d_varphi, Z2s) - 2 * iota_N * Z2c \
-                                        - (1 / dldp) * (-abs_G0_over_B0*abs_G0_over_B0*B2s/B0 + (3/2)*(abs_G0_over_B0*abs_G0_over_B0*B1c*B1s/(B0*B0) \
-                                        - (X1c*X1s*k1*k1 + X1c*Y1s*k1*k2 + X1s*Y1c*k1*k2 + Y1c*Y1s*k2*k2)/4 * dldp*dldp - (qc*qs+rc*rs)/2)))
-    eqA36_inhomogeneous = (1 / dldp) * (np.matmul(d_d_varphi, Z2c) - 2 * iota_N * Z2s \
-                                        - (1 / dldp) * (-abs_G0_over_B0*abs_G0_over_B0*B2c/B0 + (3/4)*(abs_G0_over_B0*abs_G0_over_B0*(B1c*B1c-B1s*B1s)/(B0*B0) \
-                                        - ((X1c*X1c - X1s * X1s)*k1*k1 + 2*(X1c*Y1c-X1s*Y1s)*k1*k2 + (Y1c*Y1c - Y1s*Y1s)*k2*k2)/4 * dldp*dldp - (qc*qc - qs*qs + rc*rc - rs*rs)/4)))
+                                        - (1 / dldp) * (-abs_G0_over_B0*abs_G0_over_B0*B2s/B0 + (3/2)*(abs_G0_over_B0*abs_G0_over_B0*B1c*B1s/(B0*B0)) \
+                                        - (X1c*X1s*k1*k1 + X1c*Y1s*k1*k2 + X1s*Y1c*k1*k2 + Y1c*Y1s*k2*k2)*dldp*dldp/4  - (qc*qs+rc*rs)/2))
+    eqA36_inhomogeneous = (1 / dldp) * (np.matmul(d_d_varphi, Z2c) + 2 * iota_N * Z2s \
+                                        - (1 / dldp) * (-abs_G0_over_B0*abs_G0_over_B0*B2c/B0 + (3/4)*(abs_G0_over_B0*abs_G0_over_B0*(B1c*B1c-B1s*B1s)/(B0*B0)) \
+                                        - ((X1c*X1c - X1s*X1s)*k1*k1 + 2*(X1c*Y1c-X1s*Y1s)*k1*k2 + (Y1c*Y1c - Y1s*Y1s)*k2*k2)*dldp*dldp/4  - (qc*qc - qs*qs + rc*rc - rs*rs)/4))
 
     fx0_inhomogeneous = -(I2/Bbar) * 0.5 * (k1*(X1c*Y1c+X1s*Y1s) + k2*(Y1c*Y1c+Y1s*Y1s)) * dldp - 0.5*beta0*k1*dldp*(X1s*Y1c - X1c*Y1s) - 0.5*dldp*(beta_1c*Y1s - beta_1s*Y1c) + k1*dldp*Z20
-    fxs_inhomogeneous = -(I2/Bbar) * 0.5 * (k1*(X1s*Y1c+X1c*Y1s) + 2*k2*(Y1c*Y1s)) * dldp - 0.5*beta0*dldp*(k1*(X1c*Y1c - X1s*Y1s)-k2*(Y1s*Y1s-Y1c*Y1c)) - 0.5*dldp*(beta_1c*Y1s - beta_1s*Y1c) + k1*dldp*Z2s
+    fxs_inhomogeneous = -(I2/Bbar) * 0.5 * (k1*(X1s*Y1c+X1c*Y1s) + 2*k2*(Y1c*Y1s)) * dldp - 0.5*beta0*dldp*(k1*(X1c*Y1c - X1s*Y1s)-k2*(Y1s*Y1s-Y1c*Y1c)) - 0.5*dldp*(beta_1s*Y1s - beta_1c*Y1c) + k1*dldp*Z2s
     fxc_inhomogeneous = -(I2/Bbar) * 0.5 * (k1*(X1c*Y1c-X1s*Y1s) + k2*(Y1c*Y1c-Y1s*Y1s)) * dldp - 0.5*beta0*dldp*(-k1*(X1c*Y1s + X1s*Y1c)-2*k2*(Y1s*Y1c)) - 0.5*dldp*(beta_1c*Y1s + beta_1s*Y1c) + k1*dldp*Z2c
 
     fy0_inhomogeneous =  (I2/Bbar) * 0.5 * (k1*(X1s*X1s+X1c*X1c) + k2*(X1c*Y1c + X1s*Y1s)) * dldp - 0.5*beta0*dldp*(k2*(X1s*Y1c-X1c*Y1s)) - 0.5*dldp*(beta_1s*X1c - beta_1c*X1s) + k2*dldp*Z20
@@ -320,6 +322,7 @@ def r2calc(self):
     self.Z2s = Z2s
     self.Z2c = Z2c
     self.beta_1s = beta_1s
+    self.beta_1c = beta_1c
     self.B20 = B20
 
     # O(r^2) diagnostics:

@@ -6,7 +6,7 @@ def curvilinear_frame_to_cylindrical_residual_func(phi0, phi_target, qsc):
     This function takes a point on the magnetic axis with a given
     toroidal angle phi0, computes the actual toroidal angle phi
     for an associated point at r>0 and finds the difference between
-    this phi and the target value of phi
+    this phi and the target value of phi (see pyQSC)
 
     Args:
         phi0 (float): toroidal angle on the axis

@@ -1,6 +1,10 @@
 import numpy as np
 from .util import Struct
 
+"""
+Function to calculate the Grad B tensor, from pyQSC/Landreman 2021 "Figures of Merit..." equation (3.11)
+"""
+
 def calculate_grad_B_tensor(self):
 
     s = self

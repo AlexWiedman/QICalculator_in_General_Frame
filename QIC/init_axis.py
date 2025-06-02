@@ -3,6 +3,9 @@ from scipy.interpolate import CubicSpline as spline
 from QIC.spectral_diff_matrix import spectral_diff_matrix
 from QIC.r1calcLambda import _determine_helicity
 from QIC.centroidFrame import get_FS_frame, centroid, get_Centroid_frame, get_kappa1_kappa2, get_kappa3, get_r_vector
+"""
+Calculate the magnetic axis 
+"""
 
 def convert_to_spline(self,array):
     sp=spline(np.append(self.phi,2*np.pi/self.nfp), np.append(array,array[0]), bc_type='periodic')
@@ -158,8 +161,7 @@ def init_axis(self):
     self.tangent_cylindrical = np.array([tan_R, tan_phi, tan_z]).T
     self.frame_p_cylindrical =  np.array([p_R, p_phi, p_z]).T
     self.frame_q_cylindrical = np.array([q_R, q_phi, q_z]).T
-    # if i remember correctly, this version of Bbar doesn't make sense and needs to be something else.
-    self.Bbar = self.spsi * self.B0
+    self.Bbar = self.spsi * np.mean(self.B0)
     self.abs_G0_over_B0 = abs_G0_over_B0
 
     self.lasym = np.max(np.abs(self.rs)) > 0 or np.max(np.abs(self.zc)) > 0 \
