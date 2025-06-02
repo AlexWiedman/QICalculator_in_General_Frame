@@ -2,7 +2,7 @@ import numpy as np
 from .util import mu0
 
 """
-Order 2 is currently not behaving correctly
+Order 2 is currently not behaving correctly, I believe this is due to an issue with equation 41, but I'm not sure exactly where it is
 """
 
 def r2calc(self):
@@ -151,10 +151,10 @@ def r2calc(self):
 
     eqA41_X20 = -X1s*fx0_X20 + X1c*fxs_X20 - X1s*fxc_X20 - Y1s*fy0_X20 + Y1c*fys_X20 - Y1s*fyc_X20
     eqA41_X2s = -X1s*fx0_X2s + X1c*fxs_X2s - X1s*fxc_X2s - Y1s*fy0_X2s + Y1c*fys_X2s - Y1s*fyc_X2s
-    eqA41_X2c = -X1s*fx0_X2c + X1c*fxs_X2c - X1s*fxc_X2c - Y1s*fy0_X2c + Y1c*fyc_X2c - Y1s*fyc_X2c
-    eqA41_Y20 = -X1s*fx0_Y20 + X1c*fxs_Y20 - X1s*fxc_Y20 - Y1s*fy0_Y20 + Y1c*fyc_Y20 - Y1s*fyc_Y20
-    eqA41_Y2s = -X1s*fx0_Y2s + X1c*fxs_Y2s - X1s*fxc_Y2s - Y1s*fy0_Y2s + Y1c*fyc_Y2s - Y1s*fyc_Y2s
-    eqA41_Y2c = -X1s*fx0_Y2c + X1c*fxs_Y2c - X1s*fxc_Y2c - Y1s*fy0_Y2c + Y1c*fyc_Y2c - Y1s*fys_Y2c
+    eqA41_X2c = -X1s*fx0_X2c + X1c*fxs_X2c - X1s*fxc_X2c - Y1s*fy0_X2c + Y1c*fys_X2c - Y1s*fyc_X2c
+    eqA41_Y20 = -X1s*fx0_Y20 + X1c*fxs_Y20 - X1s*fxc_Y20 - Y1s*fy0_Y20 + Y1c*fys_Y20 - Y1s*fyc_Y20
+    eqA41_Y2s = -X1s*fx0_Y2s + X1c*fxs_Y2s - X1s*fxc_Y2s - Y1s*fy0_Y2s + Y1c*fys_Y2s - Y1s*fyc_Y2s
+    eqA41_Y2c = -X1s*fx0_Y2c + X1c*fxs_Y2c - X1s*fxc_Y2c - Y1s*fy0_Y2c + Y1c*fys_Y2c - Y1s*fyc_Y2c
 
     eqA42_X20 = -X1c*fx0_X20 + X1s*fxs_X20 + X1c*fxc_X20 - Y1c*fy0_X20 + Y1s*fys_X20 + Y1c*fyc_X20
     eqA42_X2s = -X1c*fx0_X2s + X1s*fxs_X2s + X1c*fxc_X2s - Y1c*fy0_X2s + Y1s*fys_X2s + Y1c*fyc_X2s
