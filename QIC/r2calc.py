@@ -2,7 +2,7 @@ import numpy as np
 from .util import mu0
 
 """
-Order 2 is currently not behaving correctly, I believe this is due to an issue with equation 41, but I'm not sure exactly where it is
+The equation for B20 may be incorrect, must check this
 """
 
 def r2calc(self):
@@ -271,14 +271,11 @@ def r2calc(self):
     np.testing.assert_allclose(np.sum(eqA41is0), 0, atol=1E-10)
     np.testing.assert_allclose(np.sum(eqA42is0), 0, atol=1E-10)
 
-    G2 = -mu0 * p2 * G0 / (B0 * B0) - iota * I2
-
-
-    B20 = -(B0*B0*B0 / (G0*G0)) * (dldp * ((X20 * k1 + Y20 * k2) * dldp - np.matmul(d_d_varphi, Z20)) \
-          - (3*G0*G0*(B1c*B1c+B1s*B1s)/(4*B0*B0*B0*B0)) - (G0*(G2 + iota * I2))/(B0*B0) \
-          + dldp * dldp * ((X1c * k1 + Y1c * k2)*(X1c * k1 + Y1c * k2) + (X1s * k1 + Y1s * k2)*(X1s * k1 + Y1s * k2)) / 4 \
-          + (qc * qc + qs * qs + rc * rc + rs * rs)/4)
     
+    B20 = (B0*B0_over_abs_G0*B0_over_abs_G0) * (dldp*((X20 * k1 + Y20 * k2) * dldp - np.matmul(d_d_varphi, Z20)) \
+          + (0.75*abs_G0_over_B0*abs_G0_over_B0*(B1c*B1c+B1s*B1s)/(B0*B0)) + (abs_G0_over_B0*abs_G0_over_B0*(-mu0 * p2))/(B0*B0) \
+          - 0.25 * dldp * dldp * ((X1c * k1 + Y1c * k2)*(X1c * k1 + Y1c * k2) + (X1s * k1 + Y1s * k2)*(X1s * k1 + Y1s * k2)) \
+          - 0.25 * (qc * qc + qs * qs + rc * rc + rs * rs))    
           
 
     d_l_d_phi = self.d_l_d_phi
@@ -289,7 +286,7 @@ def r2calc(self):
     self.B20_variation = np.max(B20) - np.min(B20)
 
     self.N_helicity = - self.helicity * self.nfp
-    self.G2 = G2
+    self.G2 = -mu0 * p2 * G0 / (B0 * B0) - iota * I2
 
     self.d_k1_d_varphi = np.matmul(d_d_varphi, k1)
     self.d_k2_d_varphi = np.matmul(d_d_varphi, k2)

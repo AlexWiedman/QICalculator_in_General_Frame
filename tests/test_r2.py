@@ -92,15 +92,7 @@ class QIC_v_QSC(unittest.TestCase):
             qc_ = np.matmul(d_d_varphi,X1c) + iota_N * X1s - Y1c * k3 * dldp
             rs_ = np.matmul(d_d_varphi,Y1s) - iota_N * Y1c + X1s * k3 * dldp
             rc_ = np.matmul(d_d_varphi,Y1c) + iota_N * Y1s + X1c * k3 * dldp
-
-
-            B20 = -(B0*B0*B0 / (G0*G0)) * (dldp * ((X20 * k1 + Y20 * k2) * dldp - np.matmul(d_d_varphi, Z20)) \
-          - (3*G0*G0*(B1c*B1c+B1s*B1s)/(4*B0*B0*B0*B0)) - (G0*(G2 + iota * I2))/(B0*B0) \
-          + dldp * dldp * ((X1c * k1 + Y1c * k2)*(X1c * k1 + Y1c * k2) + (X1s * k1 + Y1s * k2)*(X1s * k1 + Y1s * k2)) / 4 \
-          + (qc_ * qc_ + qs_ * qs_ + rc_ * rc_ + rs_ * rs_)/4)
             
-            #set up plotting
-            #check resolution to see if matrix is working properly
             
             np.testing.assert_allclose(Z20, stel_qic.Z20)
             np.testing.assert_allclose(X1s, stel_qic.X1s)
@@ -108,7 +100,9 @@ class QIC_v_QSC(unittest.TestCase):
             np.testing.assert_allclose(stel_qsc.iota, stel_qic.iota)
             np.testing.assert_allclose(stel_qsc.G2, stel_qic.G2)
             np.testing.assert_allclose(X20, stel_qic.X20)
-            #np.testing.assert_allclose(stel_qic.B20, B20)
+            np.testing.assert_allclose(stel_qic.B20, stel_qsc.B20)
+            np.testing.assert_allclose(stel_qic.B2s, B2s)
+            np.testing.assert_allclose(stel_qic.B2c, B2c)
             
     @unittest.skip("Not stellarator symmetric")
     def test_sec_5_2(self):

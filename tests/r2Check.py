@@ -156,7 +156,7 @@ eqA41_inhomogeneous_qic = -X1s*fx0_inhomogeneous + X1c*fxs_inhomogeneous - X1s*f
 eqA42_inhomogeneous_qic = -X1c*fx0_inhomogeneous + X1s*fxs_inhomogeneous + X1c*fxc_inhomogeneous - Y1c*fy0_inhomogeneous + Y1s*fys_inhomogeneous + Y1c*fyc_inhomogeneous
 
 
-if True:
+if False:
     X1c = qic_stel.X1c
     Y1c = qic_stel.Y1c
     Y1s = qic_stel.Y1s
@@ -195,8 +195,6 @@ eqA35_qsc = -X2s * qsc_stel.curvature
 eqA36_qsc = -X2c * qsc_stel.curvature
 eqA41_qsc = -X1s * (fx0_qsc) + X1c * (fxs_qsc) - X1s * (fxc_qsc) - Y1s * (fy0_qsc) + Y1c * (fys_qsc) - Y1s * (fyc_qsc)
 eqA42_qsc = -X1c * (fx0_qsc) + X1s * (fxs_qsc) + X1c * (fxc_qsc) - Y1c * (fy0_qsc) + Y1s * (fys_qsc) + Y1c * (fyc_qsc)
-
-print(np.min(np.abs(eqA41_qic_alt-eqA41_qsc)))
 
 
 
@@ -252,6 +250,15 @@ rc = np.matmul(d_d_varphi,Y1c) + iota_N * Y1s + X1c * k3 * dldp
 print(np.max(np.abs(qic_stel.beta_1s - qsc_stel.beta_1s)))
 print(np.max(np.abs(qic_stel.beta_1c)))
 print(np.max(np.abs(qic_stel.k3 - qsc_stel.torsion)))
+print("X order 2")
+print(np.max(np.abs(qic_stel.X20 - qsc_stel.X20)))
+print(np.max(np.abs(qic_stel.X2s - qsc_stel.X2s)))
+print(np.max(np.abs(qic_stel.X2c - qsc_stel.X2c)))
+print("Y order 2")
+print(np.max(np.abs(qic_stel.Y20 - qsc_stel.Y20)))
+print(np.max(np.abs(qic_stel.Y2s - qsc_stel.Y2s)))
+print(np.max(np.abs(qic_stel.Y2c - qsc_stel.Y2c)))
+print("B order 2")
+print(np.max(np.abs(qic_stel.B20 - qsc_stel.B20)))
 print(np.max(np.abs(qic_stel.B2s - qsc_stel.B2s)))
 print(np.max(np.abs(qic_stel.B2c - qsc_stel.B2c)))
-print(np.max(np.abs(qic_stel.Y2c - qsc_stel.Y2c)))
