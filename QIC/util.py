@@ -100,7 +100,10 @@ def B_mag(self, r, theta, phi, Boozer_toroidal = False):
     
     phi_1d = np.linspace(0, 2*np.pi, self.nphi)
     phi_rollover = np.linspace(0, 2*np.pi, self.nphi+1)
-    B_rollover = np.concatenate((B, np.atleast_2d(B[:, 0]).T), axis=1)
+    if (B.ndim == 1):
+        B_rollover = np.concatenate((B, np.atleast_1d(B[0])), axis=0)
+    else:
+        B_rollover = np.concatenate((B, np.atleast_2d(B[:, 0]).T), axis=1)
     B_spline = spline((phi_rollover/self.nfp), B_rollover, axis=1, bc_type='periodic')
     B_full = B_spline(phi_1d)
 
