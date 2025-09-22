@@ -48,7 +48,7 @@ def to_vmec(self, filename, r=0.1, params=dict(), ntheta=20, ntorMax=14):
 
     # Set pressure Profile
     temp = - self.p2 * r * r
-    am = [temp,-temp]
+    am = [float(temp),-float(temp)]
     pmass_type='power_series'
     pres_scale=1
 

@@ -87,10 +87,6 @@ def test_sec_5_3():
 sqi, sqs = test_sec_5_1()
 
 print(sqi.iotaN - sqs.iotaN)
-
-quit()
-print(sqi.X1s - x1s)
-print(sqi.Y1s - y1s)
 print(sqi.iota)
 print(sqs.iota)
 print(sqi.iota - sqs.iota)

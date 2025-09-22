@@ -32,11 +32,11 @@ def curvilinear_frame_to_cylindrical_residual_func(phi0, phi_target, qsc):
 
     if qsc.order != 'r1':
         Z_at_phi0    = qsc.Z_spline(phi0)
-        tangent_x    = qsc.tangent_x_spline(phi0)
-        tangent_y  = qsc.tangent_y_spline(phi0)
+        tangent_R    = qsc.tangent_R_spline(phi0)
+        tangent_phi  = qsc.tangent_phi_spline(phi0)
 
-        #tangent_x = tangent_R * cosphi0 - tangent_phi * sinphi0
-        #tangent_y = tangent_R * sinphi0 + tangent_phi * cosphi0
+        tangent_x = tangent_R * cosphi0 - tangent_phi * sinphi0
+        tangent_y = tangent_R * sinphi0 + tangent_phi * cosphi0
 
         total_x = total_x + Z_at_phi0 * tangent_x
         total_y = total_y + Z_at_phi0 * tangent_y
@@ -82,12 +82,12 @@ def curvilinear_frame_to_cylindrical_1_point(phi0, qsc):
     total_z = z0_at_phi0           + X_at_phi0 * p_vector_z + Y_at_phi0 * q_vector_z
 
     if qsc.order != 'r1':
-        tangent_x   = qsc.tangent_x_spline(phi0)
-        tangent_y = qsc.tangent_y_spline(phi0)
-        tangent_z   = qsc.tangent_z_spline(phi0)
+        tangent_z    = qsc.tangent_z_spline(phi0)
+        tangent_R    = qsc.tangent_R_spline(phi0)
+        tangent_phi  = qsc.tangent_phi_spline(phi0)
 
-        #tangent_x = tangent_R * cosphi0 - tangent_phi * sinphi0
-        #tangent_y = tangent_R * sinphi0 + tangent_phi * cosphi0
+        tangent_x = tangent_R * cosphi0 - tangent_phi * sinphi0
+        tangent_y = tangent_R * sinphi0 + tangent_phi * cosphi0
 
         total_x = total_x + Z_at_phi0 * tangent_x
         total_y = total_y + Z_at_phi0 * tangent_y

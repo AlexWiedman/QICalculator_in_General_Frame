@@ -9,14 +9,10 @@ from qsc.qsc import Qsc
 
 #logging.basicConfig(level=logging.DEBUG)
 
-test, _, _, _ = test_sec_5_1()
+test, _ = test_sec_5_1()
 
 #test = Qsc.from_paper("r1 section 5.1", nphi=63)
 nphi = test.nphi
-
-#print(test.k1)
-#print(test.k2)
-#print(test.k3)
 
 
 plot(test) #works fine (could use some tuning in some places though)

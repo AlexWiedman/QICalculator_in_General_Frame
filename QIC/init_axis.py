@@ -165,7 +165,7 @@ def init_axis(self):
     self.abs_G0_over_B0 = abs_G0_over_B0
 
     self.lasym = np.max(np.abs(self.rs)) > 0 or np.max(np.abs(self.zc)) > 0 \
-        or self.sigma0 != 0 or (self.order != 'r1' and self.B2s != 0)
+        or self.sigma0 != 0
 
     # Functions that converts a toroidal angle phi0 on the axis to the axis radial and vertical coordinates
     self.R0_func = self.convert_to_spline(sum([self.rc[i]*np.cos(i*self.nfp*self.phi) +\
