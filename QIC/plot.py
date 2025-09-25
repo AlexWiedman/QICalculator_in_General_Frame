@@ -11,15 +11,14 @@ from QIC.util import to_Fourier
 ####################### pyQSC
 def plot(self, newfigure=True, show=True):
     """
-    This plot script from pyQSC is better than I could write on my own, so I'm doing that.
-    I really need to make sure I rewrite these comments before I make this public.
+    Plot script from pyQSC. Some additional plots are added to align with the different curvilinear frame.
     """
     if newfigure:
         plt.figure(figsize=(14, 7))
     plt.rcParams.update({'font.size': 6})
     if self.order == 'r1':
         nrows = 4
-        ncols = 5
+        ncols = 6
     elif self.order == 'r2':
         nrows = 4
         ncols = 8
@@ -61,9 +60,9 @@ def plot(self, newfigure=True, show=True):
     subplot('curvature', y0=True)
     subplot('torsion')
     subplot('sigma')
-    #subplot('X1c') # This is an input (in this version)
+    subplot('X1c') # This is an input (in this version)
     subplot('X1s')
-    #subplot('Y1c') # This is an input (in this version)
+    subplot('Y1c') # This is an input (in this version)
     subplot('Y1s')
     subplot('B1s')
     subplot('B1c')
@@ -71,7 +70,10 @@ def plot(self, newfigure=True, show=True):
     subplot('L_grad_B', y0=True)
     subplot('1/L_grad_B', data=self.inv_L_grad_B)
 
-    # Ignoring second order for now
+    if self.order == 'r2':
+        subplot('B20')
+        subplot('B2s')
+        subplot('B2c')
 
     plt.tight_layout()
     if show:
@@ -81,8 +83,6 @@ def plot(self, newfigure=True, show=True):
 ####################### pyQSC
 def set_axes_equal(ax):
     '''
-    They say imitation is the greatest form of flattery...
-
     Make axes of 3D plot have equal scale so that spheres appear as spheres,
     cubes as cubes, etc..  This is one possible solution to Matplotlib's
     ax.set_aspect('equal') and ax.axis('equal') not working for 3D.

@@ -10,6 +10,7 @@ class QIC():
     from QIC.util import B_mag
     from QIC.plot import get_boundary
     from QIC.curve_frame_to_cylindrical import curvilinear_frame_to_cylindrical
+    from .r_singularity import calculate_r_singularity
 
     def __init__(self, rc, zs, rs = None, zc = None, nfp = 1, X1c = None, Y1c = None, sigma0 = 0., B0 = None, I2 = 0
                  , sG = 1, spsi = 1, nphi = 61, B2s=None, B2c=None, p2=0., order="r1", frame="centroid"):

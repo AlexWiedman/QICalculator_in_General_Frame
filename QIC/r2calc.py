@@ -336,4 +336,4 @@ def r2calc(self):
     #self.calculate_grad_grad_B_tensor()
     #self.grad_grad_B_inverse_scale_length_vs_varphi = t.grad_grad_B_inverse_scale_length_vs_varphi
     #self.grad_grad_B_inverse_scale_length = t.grad_grad_B_inverse_scale_length
-    #self.calculate_r_singularity()
+    self.calculate_r_singularity()
