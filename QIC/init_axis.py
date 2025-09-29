@@ -3,6 +3,7 @@ from scipy.interpolate import CubicSpline as spline
 from QIC.spectral_diff_matrix import spectral_diff_matrix
 from QIC.r1calcLambda import _determine_helicity
 from QIC.centroidFrame import get_FS_frame, centroid, get_Centroid_frame, get_kappa1_kappa2, get_kappa3, get_r_vector
+from scipy.linalg import inv
 """
 Calculate the magnetic axis 
 """
@@ -91,6 +92,8 @@ def init_axis(self):
     self.d_d_varphi = np.zeros((nphi, nphi))
     for j in range(nphi):
         self.d_d_varphi[j,:] = self.d_d_phi[j,:] / self.d_varphi_d_phi[j]
+    
+    self.varphi_antideriv = inv(self.d_d_varphi)
 
     # Compute the Boozer toroidal angle:
     mat = self.d_d_phi.copy()

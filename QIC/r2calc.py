@@ -13,6 +13,7 @@ def r2calc(self):
     Y1c = self.Y1c
     sigma = self.sigma
     d_d_varphi = self.d_d_varphi
+    varphi_antiderive = self.varphi_antideriv
     iota_N = self.iotaN
     iota = self.iota
     k1 = self.k1
@@ -33,7 +34,7 @@ def r2calc(self):
     dldp = self.d_l_d_varphi
 
     d_beta0_d_varphi = 2*mu0*p2*G0/Bbar * (1 / (B0 * B0) - 1 / (2*np.pi) * (1 / np.sum(B0 * B0)))
-    beta0=0
+    beta0 = np.matmul(varphi_antiderive, d_beta0_d_varphi)
 
     V1 = X1c * X1c + X1s * X1s + Y1c * Y1c + Y1s * Y1s
     V2 = 2 * (X1s * X1c + Y1s * Y1c)
@@ -44,9 +45,31 @@ def r2calc(self):
     Z2c = -1/(dldp*8)*(np.matmul(d_d_varphi,V3) + 2 * iota_N * V2)
 
 
-    # Need to double check the math here, from eq 65
-    beta_1s = -4 * spsi * sG * mu0 * p2 * B1c * abs_G0_over_B0 / (iota_N * B0 * B0)
-    beta_1c = -4 * spsi * sG * mu0 * p2 * B1s * abs_G0_over_B0 / (iota_N * B0 * B0)
+    matrix = np.zeros((2*nphi, 2*nphi))
+    right_hand_side = np.zeros((2*nphi))
+
+    for j in range(nphi):
+            # Derivative Terms
+            #beta_1c
+            matrix[j, 0:nphi] = d_d_varphi[j, :]
+            #beta_1s terms
+            matrix[j+nphi, nphi:2*nphi] = d_d_varphi[j, :]
+
+            # Non Derivative Terms
+            #beta_1c
+            matrix[j, j+nphi] = matrix[j, j+nphi] - iota_N
+            #beta_1s
+            matrix[j+nphi, j] = matrix[j, j+nphi] - iota_N
+
+    right_hand_side[0*nphi:1*nphi] = -4 * sG * mu0 * p2 * B1c * abs_G0_over_B0 / (iota_N * B0 * B0 * Bbar)
+    right_hand_side[1*nphi:2*nphi] = -4 * sG * mu0 * p2 * B1s * abs_G0_over_B0 / (iota_N * B0 * B0 * Bbar)
+
+    solution = np.linalg.solve(matrix, right_hand_side)
+
+
+    beta_1s = solution[0:nphi]
+    beta_1c = solution[nphi:2*nphi]
+
 
     qs = np.matmul(d_d_varphi,X1s) - iota_N * X1c - Y1s * k3 * dldp
     qc = np.matmul(d_d_varphi,X1c) + iota_N * X1s - Y1c * k3 * dldp
@@ -247,11 +270,10 @@ def r2calc(self):
     Y2c = solution[4*nphi:5*nphi]
     Y2s = solution[5*nphi:6*nphi]
 
+    """
     A41derivterms = -X1s * np.matmul(d_d_varphi,X20) - X1s * np.matmul(d_d_varphi, X2c) + X1c * np.matmul(d_d_varphi, X2s) - Y1s * np.matmul(d_d_varphi, Y20) - Y1s * np.matmul(d_d_varphi, Y2c) + Y1c * np.matmul(d_d_varphi, Y2s)
     A42derivterms = -X1c * np.matmul(d_d_varphi,X20) + X1c * np.matmul(d_d_varphi, X2c) + X1s * np.matmul(d_d_varphi, X2s) - Y1c * np.matmul(d_d_varphi, Y20) + Y1c * np.matmul(d_d_varphi, Y2c) + Y1s * np.matmul(d_d_varphi, Y2s)
 
-
-    """
     eqA32is0 = eqA32_inhomogeneous + eqA32_X20 * X20 + eqA32_X2c * X2c + eqA32_X2s * X2s + eqA32_Y20 * Y20 + eqA32_Y2c * Y2c + eqA32_Y2s * Y2s
     eqA33is0 = eqA33_inhomogeneous + eqA33_X20 * X20 + eqA33_X2c * X2c + eqA33_X2s * X2s + eqA33_Y20 * Y20 + eqA33_Y2c * Y2c + eqA33_Y2s * Y2s
     eqA35is0 = eqA35_inhomogeneous + eqA35_X20 * X20 + eqA35_X2c * X2c + eqA35_X2s * X2s + eqA35_Y20 * Y20 + eqA35_Y2c * Y2c + eqA35_Y2s * Y2s
