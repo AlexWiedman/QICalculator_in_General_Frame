@@ -44,7 +44,7 @@ def r2calc(self):
     Z2s = -1/(dldp*8)*(np.matmul(d_d_varphi,V2) - 2 * iota_N * V3)
     Z2c = -1/(dldp*8)*(np.matmul(d_d_varphi,V3) + 2 * iota_N * V2)
 
-
+    """
     matrix = np.zeros((2*nphi, 2*nphi))
     right_hand_side = np.zeros((2*nphi))
 
@@ -57,19 +57,20 @@ def r2calc(self):
 
             # Non Derivative Terms
             #beta_1c
-            matrix[j, j+nphi] = matrix[j, j+nphi] - iota_N
+            matrix[j+nphi, j] = matrix[j+nphi, j] - iota_N
             #beta_1s
-            matrix[j+nphi, j] = matrix[j, j+nphi] - iota_N
+            matrix[j, j+nphi] = matrix[j, j+nphi] + iota_N
 
-    right_hand_side[0*nphi:1*nphi] = -4 * sG * mu0 * p2 * B1c * abs_G0_over_B0 / (iota_N * B0 * B0 * Bbar)
-    right_hand_side[1*nphi:2*nphi] = -4 * sG * mu0 * p2 * B1s * abs_G0_over_B0 / (iota_N * B0 * B0 * Bbar)
+    right_hand_side[0*nphi:1*nphi] = -4 * sG * mu0 * p2 * B1c * abs_G0_over_B0 / (B0 * B0 * Bbar)
+    right_hand_side[1*nphi:2*nphi] = -4 * sG * mu0 * p2 * B1s * abs_G0_over_B0 / (B0 * B0 * Bbar)
 
     solution = np.linalg.solve(matrix, right_hand_side)
 
-
-    beta_1s = solution[0:nphi]
-    beta_1c = solution[nphi:2*nphi]
-
+    beta_1c = solution[0:nphi]
+    beta_1s = solution[nphi:2*nphi]
+    """
+    beta_1c = 0 # Can we still assume beta_1c is 0?
+    beta_1s = -4 * sG * mu0 * p2 * B1c * abs_G0_over_B0 / (iota_N * B0 * B0 * Bbar)
 
     qs = np.matmul(d_d_varphi,X1s) - iota_N * X1c - Y1s * k3 * dldp
     qc = np.matmul(d_d_varphi,X1c) + iota_N * X1s - Y1c * k3 * dldp
@@ -335,6 +336,7 @@ def r2calc(self):
     self.Z20 = Z20
     self.Z2s = Z2s
     self.Z2c = Z2c
+    self.beta0 = beta0
     self.beta_1s = beta_1s
     self.beta_1c = beta_1c
     self.B20 = B20
