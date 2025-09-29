@@ -13,7 +13,6 @@ def r2calc(self):
     Y1c = self.Y1c
     sigma = self.sigma
     d_d_varphi = self.d_d_varphi
-    varphi_antiderive = self.varphi_antideriv
     iota_N = self.iotaN
     iota = self.iota
     k1 = self.k1
@@ -34,7 +33,7 @@ def r2calc(self):
     dldp = self.d_l_d_varphi
 
     d_beta0_d_varphi = 2*mu0*p2*G0/Bbar * (1 / (B0 * B0) - 1 / (2*np.pi) * (1 / np.sum(B0 * B0)))
-    beta0 = np.matmul(varphi_antiderive, d_beta0_d_varphi)
+    beta0 = 0
 
     V1 = X1c * X1c + X1s * X1s + Y1c * Y1c + Y1s * Y1s
     V2 = 2 * (X1s * X1c + Y1s * Y1c)
