@@ -34,8 +34,8 @@ def r2calc(self):
     Bbar = self.Bbar
     dldp = self.d_l_d_varphi
 
-    d_beta0_d_varphi = 2*mu0*p2*G0/Bbar * (1 / (B0 * B0) - 1 / (2*np.pi) * (1 / np.sum(B0 * B0)))
-    beta0 = 0
+    d_beta0_d_varphi = 2*mu0*p2*G0/Bbar * (1 / (B0 * B0) - 1 / (2*np.pi) * np.sum(1 / (B0 * B0)))
+    beta0 = 2*mu0*p2*G0/Bbar * 1 / (2*np.pi) * np.sum(1 / (B0 * B0) - 1 / (2*np.pi) * np.sum(1 / (B0 * B0)))
 
     V1 = X1c * X1c + X1s * X1s + Y1c * Y1c + Y1s * Y1s
     V2 = 2 * (X1s * X1c + Y1s * Y1c)
@@ -313,6 +313,7 @@ def r2calc(self):
     self.Z2s = Z2s
     self.Z2c = Z2c
     self.beta0 = beta0
+    self.d_beta0_d_varphi = d_beta0_d_varphi
     self.beta_1s = beta_1s
     self.beta_1c = beta_1c
     self.B20 = B20

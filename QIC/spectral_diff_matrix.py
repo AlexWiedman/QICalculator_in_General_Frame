@@ -33,7 +33,3 @@ def spectral_diff_matrix(n, xmin=0, xmax=2*np.pi):
     row1 = -col1
     D = 2 * np.pi / (xmax - xmin) * toeplitz(col1, r=row1)
     return D
-
-def spectral_int_matrix(n, xmin=0, xmax=2*np.pi):
-    # Invert the spectarl differentiation matrix for integration (I think this is allowed?)
-    return inv(spectral_diff_matrix(n, xmin, xmax))
