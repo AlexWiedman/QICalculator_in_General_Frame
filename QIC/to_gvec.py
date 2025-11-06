@@ -11,7 +11,7 @@ import os
 os.environ["OMP_NUM_THREADS"] = "2"
 import gvec
 
-def convert_RZ_to_varphi_theta_periodic(R, Z, varphi, phi):
+def convert_RZ_to_varphi_theta_periodic(R, Z, varphi, nfp):
     """
     Convert R(phi, theta), Z(phi, theta) into R(varphi, theta), Z(varphi, theta)
     assuming periodicity in phi and varphi.
@@ -30,12 +30,9 @@ def convert_RZ_to_varphi_theta_periodic(R, Z, varphi, phi):
     """
 
     ntheta, nphi = R.shape
-    phi_period = phi[-1] - phi[0] + (phi[1] - phi[0])
 
     # Create a uniform periodic varphi grid common to all theta
-    varphi_min = np.min(varphi)
-    varphi_max = np.max(varphi)
-    varphi_uniform = np.linspace(varphi_min, varphi_max, nphi, endpoint=False)
+    varphi_uniform = np.linspace(0, 2*np.pi/nfp, nphi, endpoint=False)
 
     Rv = np.zeros_like(R)
     Zv = np.zeros_like(Z)
@@ -52,7 +49,7 @@ def convert_RZ_to_varphi_theta_periodic(R, Z, varphi, phi):
         Z_sorted = Z_i[sort_idx]
 
         # Ensure periodic continuity
-        varphi_sorted = np.concatenate([varphi_sorted, [varphi_sorted[-1] + (varphi_sorted[1] - varphi_sorted[0])]])
+        varphi_sorted = np.concatenate([varphi_sorted, [varphi_sorted[0] + 2*np.pi/nfp]])
         R_sorted = np.concatenate([R_sorted, [R_sorted[0]]])
         Z_sorted = np.concatenate([Z_sorted, [Z_sorted[0]]])
 
@@ -157,7 +154,7 @@ def to_gvec_theta_phi(self, filename, r=0.1, ntheta=20):
     R_2D, Z_2D, varphi_2D = self.curvilinear_frame_to_cylindrical(r, ntheta=ntheta)
 
     phi1D = np.linspace(0, 2*np.pi/nfp, nphi, endpoint=False)
-    R_2Dnew, Z_2Dnew, varphi_2Dnew = convert_RZ_to_varphi_theta_periodic(R_2D, Z_2D, varphi_2D, phi1D)
+    R_2Dnew, Z_2Dnew, varphi_2Dnew = convert_RZ_to_varphi_theta_periodic(R_2D, Z_2D, varphi_2D, nfp)
     R_2Dnew = np.transpose(R_2Dnew, axes=(1, 0))
     Z_2Dnew = np.transpose(Z_2Dnew, axes=(1, 0))
 
@@ -187,7 +184,4 @@ def to_gvec_theta_phi(self, filename, r=0.1, ntheta=20):
 
 
     gvec.scripts.quasr.convert_quasr(xyz, nfp, filename, format='toml')
-    print({
-    "PhiEdge": np.pi * r * r * self.spsi * self.Bbar,
-    "iota_type": 'polynomial',
-    "iota_coefs": self.iota})
+    gvec.scripts.quasr.save_xyz(xyz, nfp, filename + "xyz_save.nc")

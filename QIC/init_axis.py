@@ -40,21 +40,32 @@ def init_axis(self):
     
     d_l_d_phi = np.sqrt(R0 * R0 + R0p * R0p + Z0p * Z0p)
     d2_l_d_phi2 = (R0 * R0p + R0p * R0pp + Z0p * Z0pp) / d_l_d_phi
-    B0_over_abs_G0 = nphi / np.sum(d_l_d_phi)
-    abs_G0_over_B0 = 1 / B0_over_abs_G0
-    self.d_l_d_varphi = abs_G0_over_B0
-    G0 = self.sG * abs_G0_over_B0 * self.B0
+    self.d_d_phi = spectral_diff_matrix(self.nphi, xmax=2 * np.pi / self.nfp)
 
+    ### Use the G0 calculation from https://github.com/rogeriojorge/pyQIC/
+    nu = np.zeros((nphi,))
+    for j in range(20):
+        varphi = phi + nu
+        abs_G0 = np.sum(self.B0 * d_l_d_phi) / nphi
+        rhs = -1 + d_l_d_phi * self.B0 / abs_G0
+        last_nu = nu
+        nu = np.linalg.solve(self.d_d_phi, rhs)
+        norm_change = np.sqrt(sum((nu-last_nu)**2)/nphi)
+        if norm_change < 1e-13:
+            break
+    varphi = phi + nu
+    self.varphi = varphi
+    self.d_varphi_d_phi = 1 + np.matmul(self.d_d_phi, nu)
+    
+    d_l_d_varphi = d_l_d_phi / self.d_varphi_d_phi
+
+    G0 = self.sG * np.sum(self.B0 * d_l_d_varphi) / nphi
 
     # For these next arrays, the first dimension is phi, and the 2nd dimension is (R, phi, Z).
     d_r_d_phi_cylindrical = np.array([R0p, R0, Z0p]).transpose()
     d2_r_d_phi2_cylindrical = np.array([R0pp - R0, 2 * R0p, Z0pp]).transpose()
     d3_r_d_phi3_cylindrical = np.array([R0ppp - 3 * R0p, 3 * R0pp - R0, Z0ppp]).transpose()
         
-
-    
-
-   
     # Calculates position in cartesian coordinates
     r, rp, rpp, rppp = get_r_vector(R0, R0p, R0pp, R0ppp, Z0, Z0p, Z0pp, Z0ppp, nphi, nfp)
     # Calculates necessary diagnostics for the centroid frame from the Frenet-Serret frame
@@ -84,19 +95,11 @@ def init_axis(self):
     self._determine_helicity()
 
     axis_length = np.sum(d_l_d_phi) * d_phi * nfp
-
-    self.d_d_phi = spectral_diff_matrix(self.nphi, xmax=2 * np.pi / self.nfp)
-    self.d_varphi_d_phi = B0_over_abs_G0 * d_l_d_phi
+    
     self.d_d_varphi = np.zeros((nphi, nphi))
     for j in range(nphi):
         self.d_d_varphi[j,:] = self.d_d_phi[j,:] / self.d_varphi_d_phi[j] 
 
-    # Compute the Boozer toroidal angle:
-    mat = self.d_d_phi.copy()
-    mat[0,0] = 1
-    rhs = self.d_varphi_d_phi - 1
-    nu = np.linalg.solve(mat, rhs)
-    self.varphi = phi + nu
 
     # Add all results to self:
     self.phi = phi
@@ -123,9 +126,6 @@ def init_axis(self):
     self.tangent_cartesian = tangent
     self.frame_p_cartesian = p
     self.frame_q_cartesian = q
-
-    #self.min_R0 = fourier_minimum(self.R0)
-    #TODO tangent later
 
     tan_R = np.zeros(nphi)
     tan_phi = np.zeros(nphi)
@@ -161,7 +161,8 @@ def init_axis(self):
     self.frame_p_cylindrical =  np.array([p_R, p_phi, p_z]).T
     self.frame_q_cylindrical = np.array([q_R, q_phi, q_z]).T
     self.Bbar = self.spsi * np.mean(self.B0)
-    self.abs_G0_over_B0 = abs_G0_over_B0
+    self.abs_G0_over_B0 = d_l_d_varphi
+    self.d_l_d_varphi = d_l_d_varphi
 
     self.lasym = np.max(np.abs(self.rs)) > 0 or np.max(np.abs(self.zc)) > 0 \
         or self.sigma0 != 0

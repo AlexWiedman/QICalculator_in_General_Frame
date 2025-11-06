@@ -56,10 +56,10 @@ def solve_sigma_equation(self):
 
     self.sigma = newton(self._residual, x0, jac=self._jacobian)
     self.iota = self.sigma[0]
-    self.iotaN = self.iota
+    self.iotaN = self.iota + self.helicity * self.nfp
     self.sigma[0] = self.sigma0
 
-def _determine_helicity(self):
+def _determine_helicity_fs(self):
     """
     To the best of my understanding, any helicity calculation will be identical to that of 
     pyQSC, if we still have information on the normal vector. We could also use one of the alternate vectors I suppose.
@@ -90,6 +90,39 @@ def _determine_helicity(self):
     counter *= self.spsi * self.sG
     self.helicity = counter / 4
 
+def _determine_helicity(self):
+    """
+    Helicity calculation based on changes in sign of X1c and Y1c
+    This will only work for the centroid frame, or other frames where a vector will point outwards radially
+    """
+
+    quadrant = np.zeros(self.nphi + 1)
+    for j in range(self.nphi):
+        if self.X1c[j] >= 0:
+            if self.Y1c[j] >= 0:
+                quadrant[j] = 1
+            else:
+                quadrant[j] = 4
+        else:
+            if self.Y1c[j] >= 0:
+                quadrant[j] = 2
+            else:
+                quadrant[j] = 3
+
+    quadrant[self.nphi] = quadrant[0]
+
+    counter = 0
+    for j in range(self.nphi):
+        if quadrant[j] == 4 and quadrant[j+1] == 1:
+            counter += 1
+        elif quadrant[j] == 1 and quadrant[j+1] == 4:
+            counter -= 1
+        else:
+            counter += quadrant[j+1] - quadrant[j]
+
+    counter *= self.spsi * self.sG
+    self.helicity = counter / 4
+
 def r1_diagnostics(self):
     """
     Find other first order properties, after sigma and iota are found.
@@ -104,10 +137,7 @@ def r1_diagnostics(self):
     self.B1c = (self.X1c * self.k1 + self.Y1c * self.k2) * self.B0
     self.B1s = (self.X1s * self.k1 + self.Y1s * self.k2) * self.B0
 
-    # Helicity is not currently implemented, since its unnecessary in the centroid frame.
-    # It may be important in a completely general frame that does twist, and this should be taken into account in later versions
-    #if self.helicity == 0:
-    if True:
+    if self.helicity == 0:
         self.X1s_untwisted = self.X1s
         self.X1c_untwisted = self.X1c
         self.Y1s_untwisted = self.Y1s
