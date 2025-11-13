@@ -2,7 +2,7 @@ import numpy as np
 import time
 from QIC.newtonMethod import newton
 """
-
+Solve the Near Axis Expansion to first order using the Lambda equation.
 """
 
 def _residual(self, x):
