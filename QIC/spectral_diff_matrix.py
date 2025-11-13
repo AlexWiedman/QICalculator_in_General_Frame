@@ -2,7 +2,7 @@
 
 """
 This module contains a subroutine for making spectral differentiation matrices.
-Taken in its entirety from pyQSC
+https://github.com/landreman/pyQSC/blob/main/qsc/spectral_diff_matrix.py
 """
 
 import numpy as np
@@ -12,7 +12,7 @@ def spectral_diff_matrix(n, xmin=0, xmax=2*np.pi):
     """
     Return the spectral differentiation matrix for n grid points
     on the periodic domain [xmax, xmax). This routine is based on the
-    matlab code in the DMSuite package by S.C. Reddy and J.A.C. Weideman (no relation), available at
+    matlab code in the DMSuite package by S.C. Reddy and J.A.C. Weideman, available at
     http://www.mathworks.com/matlabcentral/fileexchange/29
     or here:
     http://dip.sun.ac.za/~weideman/research/differ.html  

@@ -1,6 +1,6 @@
 """
 This module contains the routines to output a
-near-axis boundary to a VMEC input file
+near-axis boundary to a GVEC input file
 """
 from datetime import datetime
 import numpy as np
@@ -151,7 +151,7 @@ def to_gvec_theta_phi(self, filename, r=0.1, ntheta=20):
 
     xyz = np.zeros((nphi*nfp, ntheta, 3))
 
-    R_2D, Z_2D, varphi_2D = self.curvilinear_frame_to_cylindrical(r, ntheta=ntheta)
+    R_2D, Z_2D, varphi_2D = self.curvilinear_frame_to_cylindrical_untwisted(r, ntheta=ntheta)
 
     phi1D = np.linspace(0, 2*np.pi/nfp, nphi, endpoint=False)
     R_2Dnew, Z_2Dnew, varphi_2Dnew = convert_RZ_to_varphi_theta_periodic(R_2D, Z_2D, varphi_2D, nfp)

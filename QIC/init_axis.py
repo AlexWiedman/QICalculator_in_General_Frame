@@ -11,7 +11,6 @@ def convert_to_spline(self,array):
     return sp
 
 def init_axis(self):
-
     nphi = self.nphi
     nfp = self.nfp
 
@@ -25,6 +24,7 @@ def init_axis(self):
     Z0pp = np.zeros(nphi)
     R0ppp = np.zeros(nphi)
     Z0ppp = np.zeros(nphi)
+    # Calculation of R0 and Z0 with first three derivatives from fourier series
     for jn in range(0, self.nfourier):
         n = jn * nfp
         sinangle = np.sin(n * phi)
@@ -43,6 +43,7 @@ def init_axis(self):
     self.d_d_phi = spectral_diff_matrix(self.nphi, xmax=2 * np.pi / self.nfp)
 
     ### Use the G0 calculation from https://github.com/rogeriojorge/pyQIC/
+    # Calculates G0 and varphi by solving for nu from the definition of varphi
     nu = np.zeros((nphi,))
     for j in range(20):
         varphi = phi + nu
@@ -53,9 +54,10 @@ def init_axis(self):
         norm_change = np.sqrt(sum((nu-last_nu)**2)/nphi)
         if norm_change < 1e-13:
             break
-    varphi = phi + nu
+    varphi = phi + nu - nu[0]
+    self.nu = nu
     self.varphi = varphi
-    self.d_varphi_d_phi = 1 + np.matmul(self.d_d_phi, nu)
+    self.d_varphi_d_phi = 1 + np.matmul(self.d_d_phi, nu - nu[0])
     
     d_l_d_varphi = d_l_d_phi / self.d_varphi_d_phi
 
@@ -92,7 +94,8 @@ def init_axis(self):
     
     self.normal_cartesian = normal
     self.binormal_cartesian = binormal
-    self._determine_helicity()
+    # For IotaN calculations, helicity should be Frenet-Serret
+    self._determine_helicity_fs()
 
     axis_length = np.sum(d_l_d_phi) * d_phi * nfp
     
@@ -127,6 +130,7 @@ def init_axis(self):
     self.frame_p_cartesian = p
     self.frame_q_cartesian = q
 
+    # Save Centroid frame in cylindrical coordinates
     tan_R = np.zeros(nphi)
     tan_phi = np.zeros(nphi)
     tan_z = np.zeros(nphi)

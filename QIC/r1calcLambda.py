@@ -1,11 +1,13 @@
 import numpy as np
 import time
 from QIC.newtonMethod import newton
+"""
 
+"""
 
 def _residual(self, x):
     """
-    Calculate the residual of the sigma equation
+    Calculate the residual of the lambda equation (called sigma here, since lambda is a python command)
     """
     sigma = np.copy(x)
     sigma[0] = self.sigma0
@@ -27,7 +29,7 @@ def _residual(self, x):
 
 def _jacobian(self, x):
     """
-    Calculate the jacobian of the sigma equation
+    Calculate the jacobian of the lambda equation
     """
     sigma = np.copy(x)
     sigma[0] = self.sigma0
@@ -55,13 +57,13 @@ def solve_sigma_equation(self):
     x0[0] = 0 # Initial guess for iota
 
     self.sigma = newton(self._residual, x0, jac=self._jacobian)
-    self.iota = self.sigma[0]
-    self.iotaN = self.iota + self.helicity * self.nfp
+    self.iota = self.sigma[0] 
+    self.iotaN = self.sigma[0] + self.helicity * self.nfp
     self.sigma[0] = self.sigma0
 
 def _determine_helicity_fs(self):
     """
-    To the best of my understanding, any helicity calculation will be identical to that of 
+    To the best of my understanding, the helicity calculation will be identical to that of 
     pyQSC, if we still have information on the normal vector. We could also use one of the alternate vectors I suppose.
     """
     quadrant = np.zeros(self.nphi + 1)
@@ -90,10 +92,11 @@ def _determine_helicity_fs(self):
     counter *= self.spsi * self.sG
     self.helicity = counter / 4
 
-def _determine_helicity(self):
+def _determine_helicity_centroid(self):
     """
-    Helicity calculation based on changes in sign of X1c and Y1c
+    This helicity calculation is based on changes in sign of X1c and Y1c
     This will only work for the centroid frame, or other frames where a vector will point outwards radially
+    It is not analagous to the helicity of the FS frame, and should only be used for untwisting, not for calculating IotaN
     """
 
     quadrant = np.zeros(self.nphi + 1)
@@ -121,7 +124,7 @@ def _determine_helicity(self):
             counter += quadrant[j+1] - quadrant[j]
 
     counter *= self.spsi * self.sG
-    self.helicity = counter / 4
+    return counter / 4
 
 def r1_diagnostics(self):
     """

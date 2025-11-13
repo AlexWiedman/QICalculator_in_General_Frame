@@ -18,7 +18,7 @@ def newton(f, x0, jac, niter=20, tol=1e-13, nlinesearch=10):
     niter = max number of Newton iterations.
     tol = stop when the residual norm is less than this.
 
-    It's exactly the same as pyQSC, I have to cite them somewhere
+    https://github.com/landreman/pyQSC/blob/main/qsc/newton.py
     """
     x = np.copy(x0)
     x_best = np.copy(x0)

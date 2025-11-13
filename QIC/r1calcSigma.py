@@ -1,8 +1,10 @@
 import numpy as np
 import time
 from QIC.newtonMethod import newton
-
-
+"""
+Solve the Near Axis Expansion to first order with a new sigma equation. 
+This solves a slightly different equation than r1calcLambda but the inputs and outputs are identical
+"""
 def _residual(self, x):
     """
     Calculate the residual of the sigma equation

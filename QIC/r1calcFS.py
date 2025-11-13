@@ -1,7 +1,9 @@
 import numpy as np
 import time
 from newtonMethod import newton
-
+"""
+Perform near axis expansion calculations with the Frenet Serret Frame (WORK IN PROGRESS)
+"""
 
 def _residual(self, x):
     """

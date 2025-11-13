@@ -3,13 +3,13 @@ import numpy as np
 class QIC():
 
     from QIC.r1calcLambda import _residual, _jacobian, solve_sigma_equation, \
-        _determine_helicity, r1_diagnostics
+        _determine_helicity_centroid, r1_diagnostics, _determine_helicity_fs
     from .r2calc import r2calc
     from QIC.init_axis import init_axis, convert_to_spline
     from QIC.grad_B_tensor import calculate_grad_B_tensor
     from QIC.util import B_mag
     from QIC.plot import get_boundary
-    from QIC.curve_frame_to_cylindrical import curvilinear_frame_to_cylindrical
+    from QIC.curve_frame_to_cylindrical import curvilinear_frame_to_cylindrical, curvilinear_frame_to_cylindrical_untwisted
     from .r_singularity import calculate_r_singularity
 
     def __init__(self, rc, zs, rs = None, zc = None, nfp = 1, X1c = None, Y1c = None, sigma0 = 0., B0 = None, I2 = 0
