@@ -82,7 +82,7 @@ def B_mag(self, r, theta, phi, Boozer_toroidal = False):
     else:
         thetaN = theta - (self.iota - self.iotaN) * phi
     
-    B1 = self.B1c * np.cos(thetaN) + self.B1s * np.sin(thetaN)
+    B1 = self.B1c_untwisted * np.cos(theta) + self.B1s_untwisted * np.sin(theta)
 
     B = self.B0 + r * B1
     #use scipy interpolation to extend B to nfp periods for nphi points

@@ -94,8 +94,7 @@ def init_axis(self):
     
     self.normal_cartesian = normal
     self.binormal_cartesian = binormal
-    # For IotaN calculations, helicity should be Frenet-Serret
-    self._determine_helicity_fs()
+    self._determine_helicity_centroid()
 
     axis_length = np.sum(d_l_d_phi) * d_phi * nfp
     

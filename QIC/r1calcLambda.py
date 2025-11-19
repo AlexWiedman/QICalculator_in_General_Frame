@@ -12,6 +12,7 @@ def _residual(self, x):
     sigma = np.copy(x)
     sigma[0] = self.sigma0
     iota = x[0]
+    iotaN = iota + self.helicity #* self.nfp
 
     L2 = np.power(self.X1c,2) + np.power(self.Y1c,2)
     beta = -1 * self.Bbar / (self.B0 * L2)
@@ -22,7 +23,7 @@ def _residual(self, x):
 
     r = np.matmul(self.d_d_varphi, sigma) \
         - sigma * ((2 * (self.X1c * X1cP + self.Y1c * Y1cP)) / L2 + B0P / self.B0) \
-        + beta * iota * (sigma * sigma + 1 + 1 / (beta * beta))  \
+        + beta * iotaN * (sigma * sigma + 1 + 1 / (beta * beta))  \
         + 2 * self.sG * (self.Y1c * X1cP - self.X1c * Y1cP) / L2 \
         + 2 * self.G0 / self.B0 * (self.I2 / self.Bbar - self.k3)
     return r
@@ -34,6 +35,7 @@ def _jacobian(self, x):
     sigma = np.copy(x)
     sigma[0] = self.sigma0
     iota = x[0]
+    iotaN = iota + self.helicity #* self.nfp
 
     X1cP = np.matmul(self.d_d_varphi, self.X1c)
     Y1cP = np.matmul(self.d_d_varphi, self.Y1c)
@@ -45,7 +47,7 @@ def _jacobian(self, x):
     jac = np.copy(self.d_d_varphi)
     #dr/d(sigma)
     for j in range(self.nphi):
-        jac[j, j] += iota * 2 * beta[j] * sigma[j] - ((2 * (self.X1c[j] * X1cP[j] + self.Y1c[j] * Y1cP[j])) / L2[j] + B0P[j] / self.B0[j])
+        jac[j, j] += iotaN * 2 * beta[j] * sigma[j] - ((2 * (self.X1c[j] * X1cP[j] + self.Y1c[j] * Y1cP[j])) / L2[j] + B0P[j] / self.B0[j])
     #dr/d(iota)
     jac[:, 0] = beta * (sigma * sigma + 1 + 1 / (beta * beta))
 
@@ -58,7 +60,7 @@ def solve_sigma_equation(self):
 
     self.sigma = newton(self._residual, x0, jac=self._jacobian)
     self.iota = self.sigma[0] 
-    self.iotaN = self.sigma[0] + self.helicity * self.nfp
+    self.iotaN = self.sigma[0] + self.helicity
     self.sigma[0] = self.sigma0
 
 def _determine_helicity_fs(self):
@@ -96,7 +98,7 @@ def _determine_helicity_centroid(self):
     """
     This helicity calculation is based on changes in sign of X1c and Y1c
     This will only work for the centroid frame, or other frames where a vector will point outwards radially
-    It is not analagous to the helicity of the FS frame, and should only be used for untwisting, not for calculating IotaN
+    It is not analagous to the helicity of the FS frame
     """
 
     quadrant = np.zeros(self.nphi + 1)
@@ -124,7 +126,7 @@ def _determine_helicity_centroid(self):
             counter += quadrant[j+1] - quadrant[j]
 
     counter *= self.spsi * self.sG
-    return counter / 4
+    self.helicity = counter / 4
 
 def r1_diagnostics(self):
     """
@@ -145,14 +147,18 @@ def r1_diagnostics(self):
         self.X1c_untwisted = self.X1c
         self.Y1s_untwisted = self.Y1s
         self.Y1c_untwisted = self.Y1c
+        self.B1s_untwisted = self.B1s
+        self.B1c_untwisted = self.B1c
     else:
-        angle = -self.helicity * self.nfp * self.varphi
+        angle = self.helicity * self.varphi * self.nfp
         sinangle = np.sin(angle)
         cosangle = np.cos(angle)
         self.X1s_untwisted = self.X1s *   cosangle  + self.X1c * sinangle
         self.X1c_untwisted = self.X1s * (-sinangle) + self.X1c * cosangle
         self.Y1s_untwisted = self.Y1s *   cosangle  + self.Y1c * sinangle
         self.Y1c_untwisted = self.Y1s * (-sinangle) + self.Y1c * cosangle
+        self.B1s_untwisted = self.B1s *   cosangle  + self.B1c * sinangle
+        self.B1c_untwisted = self.B1s * (-sinangle) + self.B1c * cosangle
     
     self.d_X1c_d_varphi = np.matmul(self.d_d_varphi, self.X1c)
     self.d_X1s_d_varphi = np.matmul(self.d_d_varphi, self.X1s)
